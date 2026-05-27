@@ -20,6 +20,6 @@ flash:build
         
 monitor:
     probe-rs reset --chip-description-path GD32F4xx_Series.yaml --chip GD32F470ZG
-    tio /dev/ttyUSB0
+    tio -b 1500000 /dev/ttyACM0 
 
 run:build flash monitor

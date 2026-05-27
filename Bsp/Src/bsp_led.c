@@ -23,3 +23,5 @@ void bsp_led_init(void)
     gpio_bit_reset(BSP_LED3_PORT, BSP_LED3_PIN);
     gpio_bit_reset(BSP_LED4_PORT, BSP_LED4_PIN);
 }
+
+EK_EXPORT_HARDWARE(bsp_led_init);

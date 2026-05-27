@@ -47,7 +47,7 @@
 #define EKCFG_HEAP_SIZE    (64 * 1024) /* 根据 MCU SRAM 调整 */
 #define EKCFG_HEAP_SECTION ".tcmram"
 #define EKCFG_LOG_DEBUG    (1)
-#define EKCFG_LOG_COLOR    (0) /* 串口终端不支持 ANSI 时关 */
+#define EKCFG_LOG_COLOR    (1) /* 串口终端不支持 ANSI 时关 */
 #define EKCFG_LOG_BUF_SIZE (128)
 #define EKCFG_ASSERT_TINY  (1)
 #define EKCFG_ASSERT_LOG   (1)
