@@ -1,0 +1,3 @@
+[submodule "ek_utils"]
+	path = ek_utils
+	url = git@github.com:EmbeddedKitOrg/EK_UTILS.git
