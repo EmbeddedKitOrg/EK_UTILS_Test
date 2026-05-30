@@ -15,9 +15,9 @@
  * 平台/运行环境
  * ======================================================================== */
 
-#define EKCFG_RTOS      (0) /* 是否使用 RTOS (0=裸机) */
-#define EKCFG_PICOLIBC  (1) /* 是否使用 picolibc */
-#define EKCFG_IO_LWPRTF (0) /* IO 后端: lwprintf */
+#define EKCFG_RTOS      (0)
+#define EKCFG_PICOLIBC  (1)
+#define EKCFG_IO_LWPRTF (0)
 
 /* ========================================================================
  * 核心服务
@@ -31,23 +31,26 @@
  * 数据结构
  * ======================================================================== */
 
-#define EKCFG_STR          (1)
-#define EKCFG_LIST         (1)
-#define EKCFG_VEC          (1)
-#define EKCFG_RINGBUF      (1)
-#define EKCFG_RINGBUF_SPSC (1)
-#define EKCFG_STACK        (1)
-#define EKCFG_EVOKE        (1)
+#define EKCFG_STR            (1)
+#define EKCFG_LIST           (1)
+#define EKCFG_VEC            (1)
+#define EKCFG_RINGBUF        (1)
+#define EKCFG_RINGBUF_SPSC   (1)
+#define EKCFG_STACK          (1)
+#define EKCFG_EVOKE          (1)
+#define EKCFG_PICOTHREAD     (1)
+#define EKCFG_PICOTHREAD_SEM (1)
+#define EKCFG_PICOTHREAD_MSG (1)
 
 /* ========================================================================
  * 模块子配置 — 根据实际硬件调整
  * ======================================================================== */
 
 #define EKCFG_HEAP_TLSF    (1)
-#define EKCFG_HEAP_SIZE    (64 * 1024) /* 根据 MCU SRAM 调整 */
+#define EKCFG_HEAP_SIZE    (64 * 1024)
 #define EKCFG_HEAP_SECTION ".tcmram"
 #define EKCFG_LOG_DEBUG    (1)
-#define EKCFG_LOG_COLOR    (1) /* 串口终端不支持 ANSI 时关 */
+#define EKCFG_LOG_COLOR    (1)
 #define EKCFG_LOG_BUF_SIZE (128)
 #define EKCFG_ASSERT_TINY  (1)
 #define EKCFG_ASSERT_LOG   (1)
