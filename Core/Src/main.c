@@ -12,7 +12,6 @@ int main(void)
 {
     nvic_priority_group_set(NVIC_PRIGROUP_PRE4_SUB0);
     systick_init();
-    ek_heap_init();
     ek_export_init();
 
     while (1)
