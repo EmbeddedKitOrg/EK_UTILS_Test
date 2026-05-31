@@ -54,11 +54,9 @@ int main(void)
         {
             // 设定时器，睡到下次唤醒
             bsp_schedule_timer_set_once(diff_tick);
-            EK_LOG_INFO("set tick:%u", diff_tick);
             tick_inc(diff_tick);
 
             SysTick->CTRL = 0;
-            EK_LOG_WARN("goto light sleep");
             pmu_to_sleepmode(WFI_CMD);
             SysTick->CTRL = 1;
         }
