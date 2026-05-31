@@ -1,15 +1,18 @@
 #include "test.h"
 #include "ek_picothread.h"
 
-EK_LOG_FILE_TAG("test_picothread.c");
+EK_LOG_FILE_TAG("test_picothread");
 
-/* ========================================================================
- * 信号量测试
- *
- * 场景：二元信号量 (count=1)，两个任务竞争 + 一个超时演示任务。
- * sem_taskA 和 sem_taskB 交替获取/释放信号量，验证互斥与优先级轮转。
- * sem_timeout 尝试 500 tick 内获取信号量，超时则上报；若成功则短暂持有后释放。
- * ======================================================================== */
+// 测试运行时长，之后控制器挂起所有任务并输出结果汇总
+#define TEST_DURATION_TICK  5000
+
+// 测试结果统计
+static unsigned s_sem_ok;
+static unsigned s_sem_timeout_cnt;
+static unsigned s_msg_send_ok;
+static unsigned s_msg_recv_ok;
+
+static ek_pt_handle_t s_controller;
 
 #if EKCFG_PICOTHREAD_SEM == 1
 
@@ -19,20 +22,10 @@ static void _sem_timeout_demo(ek_pt_handle_t pt, void *arg);
 
 static ek_pt_handle_t s_semA;
 static ek_pt_handle_t s_semB;
-static ek_pt_handle_t s_sem_timeout;
+static ek_pt_handle_t s_sem_to;
 static ek_pt_sem_handle_t s_test_sem;
 
 #endif /* EKCFG_PICOTHREAD_SEM */
-
-/* ========================================================================
- * 消息队列测试
- *
- * 场景：容量 3 的 int 环形队列，三个任务：
- *   - msg_sender:       每 500 tick 发送一条递增消息
- *   - msg_receiver:     持续接收并打印消息内容
- *   - msg_sender_fast:  无延迟连续发送直到队列满，触发发送阻塞
- * 验证：缓冲区满时发送阻塞、缓冲区空时接收阻塞、唤醒后数据正确传递。
- * ======================================================================== */
 
 #if EKCFG_PICOTHREAD_MSG == 1
 
@@ -47,40 +40,73 @@ static ek_pt_msg_handle_t s_test_msg;
 
 #endif /* EKCFG_PICOTHREAD_MSG */
 
-/* ========================================================================
- * picothread_test_init
- * ======================================================================== */
+// 测试控制器：运行指定时长后挂起所有任务并输出结果汇总
+static void _test_controller(ek_pt_handle_t pt, void *arg)
+{
+    (void)arg;
+    EK_PT_BEGIN(pt);
+
+    EK_LOG_INFO("[ctrl] test started, duration=%u tick", TEST_DURATION_TICK);
+    EK_PT_DELAY(TEST_DURATION_TICK);
+
+#if EKCFG_PICOTHREAD_SEM == 1
+    ek_pt_suspend(s_semA);
+    ek_pt_suspend(s_semB);
+    ek_pt_suspend(s_sem_to);
+#endif
+#if EKCFG_PICOTHREAD_MSG == 1
+    ek_pt_suspend(s_sender);
+    ek_pt_suspend(s_receiver);
+    ek_pt_suspend(s_sender_fast);
+#endif
+
+    EK_LOG_INFO("====== picothread test result ======");
+#if EKCFG_PICOTHREAD_SEM == 1
+    EK_LOG_INFO("[sem] acquire=%u, timeout=%u", s_sem_ok, s_sem_timeout_cnt);
+#endif
+#if EKCFG_PICOTHREAD_MSG == 1
+    EK_LOG_INFO("[msg] send=%u, recv=%u", s_msg_send_ok, s_msg_recv_ok);
+#endif
+    EK_LOG_INFO("====== test complete ======");
+
+    EK_PT_END(pt);
+}
 
 void picothread_test_init(void)
 {
-    // #if EKCFG_PICOTHREAD_SEM == 1
-    //     s_test_sem = ek_pt_sem_create(1);
-    //     s_semA = ek_pt_create("sem_taskA", _sem_taskA, 10, NULL);
-    //     s_semB = ek_pt_create("sem_taskB", _sem_taskB, 10, NULL);
-    //     s_sem_timeout = ek_pt_create("sem_timeout", _sem_timeout_demo, 10, NULL);
-
-    //     EK_LOG_INFO("[sem] created: count=1, tasks=sem_taskA, sem_taskB, sem_timeout");
-    // #endif
+#if EKCFG_PICOTHREAD_SEM == 1
+    s_test_sem = ek_pt_sem_create(1);
+    s_semA = ek_pt_create("sem_A", _sem_taskA, 10, NULL);
+    s_semB = ek_pt_create("sem_B", _sem_taskB, 10, NULL);
+    s_sem_to = ek_pt_create("sem_timeout", _sem_timeout_demo, 10, NULL);
+    EK_LOG_INFO("[sem] created: count=1, tasks=A/B/timeout");
+#endif
 
 #if EKCFG_PICOTHREAD_MSG == 1
     s_test_msg = ek_pt_msg_create(sizeof(int), 3);
-    s_sender = ek_pt_create("msg_sender", _msg_sender, 10, NULL);
-    s_receiver = ek_pt_create("msg_receiver", _msg_receiver, 10, NULL);
-    s_sender_fast = ek_pt_create("msg_sender_fast", _msg_sender_fast, 10, NULL);
-
-    EK_LOG_INFO("[msg] created: item_size=%u, capacity=3, tasks=msg_sender, msg_receiver, msg_sender_fast",
+    s_sender = ek_pt_create("msg_send", _msg_sender, 10, NULL);
+    s_receiver = ek_pt_create("msg_recv", _msg_receiver, 10, NULL);
+    s_sender_fast = ek_pt_create("msg_fast", _msg_sender_fast, 10, NULL);
+    EK_LOG_INFO("[msg] created: item_size=%u, capacity=3, tasks=send/recv/fast",
                 (unsigned)sizeof(int));
 #endif
 
+    // 控制器优先级最高，确保能及时挂起测试任务
+    s_controller = ek_pt_create("test_ctrl", _test_controller, 5, NULL);
     EK_LOG_INFO("picothread test init done");
 }
 
 /* ========================================================================
  * 信号量测试任务
+ *
+ * 场景：二元信号量 (count=1)，两个任务竞争 + 一个超时演示任务。
+ * sem_taskA/B 交替获取/释放信号量，验证互斥与优先级轮转。
+ * sem_timeout 500 tick 内尝试获取，超时则上报统计。
  * ======================================================================== */
 
 #if EKCFG_PICOTHREAD_SEM == 1
 
+// 二元信号量竞争任务 A：获取→持有→释放→延迟，与 B 交替执行
 static void _sem_taskA(ek_pt_handle_t pt, void *arg)
 {
     (void)arg;
@@ -89,15 +115,13 @@ static void _sem_taskA(ek_pt_handle_t pt, void *arg)
     while (1)
     {
         ek_err_t err;
-
-        EK_LOG_INFO("[semA] iter=%u: waiting on semaphore...", iter);
         EK_PT_SEM_TAKE(s_test_sem, (uint32_t)-1, err);
-        (void)err;
-        EK_LOG_INFO("[semA] iter=%u: ACQUIRED semaphore (err=%u)", iter, err);
+        s_sem_ok++;
+        EK_LOG_INFO("[sem.A] iter=%u acquired", iter);
 
         EK_PT_DELAY(300);
         EK_PT_SEM_GIVE(s_test_sem);
-        EK_LOG_INFO("[semA] iter=%u: RELEASED semaphore", iter);
+        EK_LOG_INFO("[sem.A] iter=%u released", iter);
 
         iter++;
         EK_PT_DELAY(100);
@@ -105,6 +129,7 @@ static void _sem_taskA(ek_pt_handle_t pt, void *arg)
     EK_PT_END(pt);
 }
 
+// 二元信号量竞争任务 B：与 A 相同逻辑，验证互斥轮转
 static void _sem_taskB(ek_pt_handle_t pt, void *arg)
 {
     (void)arg;
@@ -113,15 +138,13 @@ static void _sem_taskB(ek_pt_handle_t pt, void *arg)
     while (1)
     {
         ek_err_t err;
-
-        EK_LOG_INFO("[semB] iter=%u: waiting on semaphore...", iter);
         EK_PT_SEM_TAKE(s_test_sem, (uint32_t)-1, err);
-        (void)err;
-        EK_LOG_INFO("[semB] iter=%u: ACQUIRED semaphore (err=%u)", iter, err);
+        s_sem_ok++;
+        EK_LOG_INFO("[sem.B] iter=%u acquired", iter);
 
         EK_PT_DELAY(300);
         EK_PT_SEM_GIVE(s_test_sem);
-        EK_LOG_INFO("[semB] iter=%u: RELEASED semaphore", iter);
+        EK_LOG_INFO("[sem.B] iter=%u released", iter);
 
         iter++;
         EK_PT_DELAY(100);
@@ -129,34 +152,30 @@ static void _sem_taskB(ek_pt_handle_t pt, void *arg)
     EK_PT_END(pt);
 }
 
-// 信号量超时演示
+// 信号量超时演示：500 tick 内尝试获取，超时则上报统计
 static void _sem_timeout_demo(ek_pt_handle_t pt, void *arg)
 {
     (void)arg;
     static unsigned iter = 0;
-    static unsigned n_ok = 0;
-    static unsigned n_to = 0;
     EK_PT_BEGIN(pt);
     while (1)
     {
         ek_err_t err;
-
-        EK_LOG_INFO("[timeout] iter=%u: waiting on semaphore (deadline=500 tick)...", iter);
         EK_PT_SEM_TAKE(s_test_sem, 500, err);
 
         if (err == EK_ERR_TIMEOUT)
         {
-            n_to++;
-            EK_LOG_INFO("[timeout] iter=%u: TIMEOUT (n_ok=%u, n_timeout=%u)", iter, n_ok, n_to);
+            s_sem_timeout_cnt++;
+            EK_LOG_INFO("[sem.timeout] iter=%u timeout (total_timeout=%u)", iter, s_sem_timeout_cnt);
             EK_PT_DELAY(2000);
         }
         else
         {
-            n_ok++;
-            EK_LOG_INFO("[timeout] iter=%u: ACQUIRED semaphore (n_ok=%u, n_timeout=%u)", iter, n_ok, n_to);
+            s_sem_ok++;
+            EK_LOG_INFO("[sem.timeout] iter=%u acquired (total_ok=%u)", iter, s_sem_ok);
             EK_PT_DELAY(100);
             EK_PT_SEM_GIVE(s_test_sem);
-            EK_LOG_INFO("[timeout] iter=%u: RELEASED semaphore", iter);
+            EK_LOG_INFO("[sem.timeout] iter=%u released", iter);
         }
 
         iter++;
@@ -168,11 +187,16 @@ static void _sem_timeout_demo(ek_pt_handle_t pt, void *arg)
 
 /* ========================================================================
  * 消息队列测试任务
+ *
+ * 场景：容量 3 的 int 环形队列，三个任务：
+ *   - msg_sender:      每 500 tick 发送一条递增消息
+ *   - msg_receiver:    持续接收并打印消息内容
+ *   - msg_sender_fast: 无延迟连续发送，验证队列满时发送阻塞与唤醒
  * ======================================================================== */
 
 #if EKCFG_PICOTHREAD_MSG == 1
 
-// 标准发送者：每 500 tick 发送一条消息
+// 定时发送者：每 500 tick 发送一条递增消息
 static void _msg_sender(ek_pt_handle_t pt, void *arg)
 {
     (void)arg;
@@ -182,11 +206,9 @@ static void _msg_sender(ek_pt_handle_t pt, void *arg)
     while (1)
     {
         ek_err_t err;
-
-        EK_LOG_INFO("[sender] iter=%u, val=%d: attempting send...", iter, counter);
         EK_PT_MSG_SEND(s_test_msg, &counter, (uint32_t)-1, err);
-        (void)err;
-        EK_LOG_INFO("[sender] iter=%u: SENT val=%d (err=%u)", iter, counter, err);
+        s_msg_send_ok++;
+        EK_LOG_INFO("[msg.send] iter=%u sent val=%d", iter, counter);
 
         counter++;
         iter++;
@@ -195,7 +217,7 @@ static void _msg_sender(ek_pt_handle_t pt, void *arg)
     EK_PT_END(pt);
 }
 
-// 标准接收者
+// 持续接收者：接收并打印消息内容
 static void _msg_receiver(ek_pt_handle_t pt, void *arg)
 {
     (void)arg;
@@ -205,10 +227,9 @@ static void _msg_receiver(ek_pt_handle_t pt, void *arg)
     while (1)
     {
         ek_err_t err;
-
-        EK_LOG_INFO("[recver] iter=%u: attempting recv...", iter);
         EK_PT_MSG_RECV(s_test_msg, &data, (uint32_t)-1, err);
-        EK_LOG_INFO("[recver] iter=%u: RECEIVED val=%d (err=%u)", iter, data, err);
+        s_msg_recv_ok++;
+        EK_LOG_INFO("[msg.recv] iter=%u recv=%d", iter, data);
 
         iter++;
         EK_PT_DELAY(100);
@@ -216,7 +237,7 @@ static void _msg_receiver(ek_pt_handle_t pt, void *arg)
     EK_PT_END(pt);
 }
 
-// 快速发送者：无延迟连续发送，验证发送阻塞与唤醒
+// 快速发送者：无延迟连续发送，验证队列满时发送阻塞与唤醒
 static void _msg_sender_fast(ek_pt_handle_t pt, void *arg)
 {
     (void)arg;
@@ -226,15 +247,12 @@ static void _msg_sender_fast(ek_pt_handle_t pt, void *arg)
     while (1)
     {
         ek_err_t err;
-
-        EK_LOG_INFO("[fast_sender] iter=%u, val=%d: attempting send...", iter, fast_counter);
         EK_PT_MSG_SEND(s_test_msg, &fast_counter, (uint32_t)-1, err);
-        (void)err;
-        EK_LOG_INFO("[fast_sender] iter=%u: SENT val=%d (err=%u)", iter, fast_counter, err);
+        s_msg_send_ok++;
+        EK_LOG_INFO("[msg.fast] iter=%u sent val=%d", iter, fast_counter);
 
         fast_counter++;
         iter++;
-        // 无延迟：下一轮循环立即尝试发送，直到队列满阻塞
     }
     EK_PT_END(pt);
 }
