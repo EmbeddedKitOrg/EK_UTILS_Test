@@ -22,7 +22,7 @@ void bsp_uart_init(void)
 
     // USART Init
     usart_deinit(BSP_UART); // 复位串口
-    usart_baudrate_set(BSP_UART, 1500000); // 设置波特率
+    usart_baudrate_set(BSP_UART, 115200); // 设置波特率
     usart_parity_config(BSP_UART, USART_PM_NONE); // 没有校验位
     usart_word_length_set(BSP_UART, USART_WL_8BIT); // 8位数据位
     usart_stop_bit_set(BSP_UART, USART_STB_1BIT); // 1位停止位
