@@ -1,6 +1,7 @@
 #include "gd32f4xx_it.h"
 #include "main.h"
 #include "systick.h"
+#include "bsp_timer.h"
 
 /*!
     \brief    this function handles NMI exception
@@ -81,4 +82,9 @@ void DebugMon_Handler(void)
 void SysTick_Handler(void)
 {
     tick_inc(1);
+}
+
+void TIMER6_IRQHandler(void)
+{
+    bsp_schedule_timer_irq_handler();
 }

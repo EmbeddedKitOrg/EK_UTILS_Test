@@ -12,6 +12,7 @@ void systick_init(void)
         {
         }
     }
+    nvic_irq_enable(SysTick_IRQn, 0, 15);
 }
 
 __WEAK uint32_t get_us_counter(void)
