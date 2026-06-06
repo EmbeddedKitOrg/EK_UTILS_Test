@@ -36,7 +36,7 @@ void bsp_uart_init(void)
     usart_enable(BSP_UART); // 使能串口
 }
 
-EK_EXPORT_EARLIEST(bsp_uart_init);
+EK_EXPORT_EARLIEST(bsp_uart_init, 1);
 
 int bsp_uart_send_data(uint8_t ch)
 {
