@@ -2,7 +2,7 @@
 #include "ek_log.h"
 #include "ek_ringbuf.h"
 
-EK_LOG_FILE_TAG("test_ringbuf.c")
+EK_LOG_FILE_TAG("test_ringbuf.c");
 
 void ringbuf_test(void)
 {

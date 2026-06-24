@@ -11,7 +11,7 @@
 
 static void _restore_clock_to_240m(void);
 
-EK_LOG_FILE_TAG("main.c");
+EK_LOG_MODULE("main.c", EK_LOG_LEVEL_INFO);
 
 int main(void)
 {
@@ -21,10 +21,10 @@ int main(void)
     ek_export_init();
 
     picothread_test_init();
-    // ringbuf_test();
-    // stack_test();
-    // str_test();
-    // vec_test();
+    ringbuf_test();
+    stack_test();
+    str_test();
+    vec_test();
 
     while (1)
     {
@@ -38,8 +38,9 @@ int main(void)
             // 可以深度睡眠
             SysTick->CTRL = 0;
             EK_LOG_WARN("goto deep sleep");
-            pmu_to_deepsleepmode(PMU_LDO_LOWPOWER, PMU_LOWDRIVER_ENABLE, WFI_CMD);
-            _restore_clock_to_240m();
+            // pmu_to_deepsleepmode(PMU_LDO_LOWPOWER, PMU_LOWDRIVER_ENABLE, WFI_CMD);
+            // _restore_clock_to_240m();
+            pmu_to_sleepmode(WFI_CMD);
             SysTick->CTRL = 1;
             EK_LOG_INFO("wake up from deepsleep");
         }
