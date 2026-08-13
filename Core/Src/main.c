@@ -20,6 +20,7 @@ int main(void)
     systick_init();
     ek_export_init();
 
+    static_alloc_test();
     picothread_test_init();
     ringbuf_test();
     stack_test();

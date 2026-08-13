@@ -183,6 +183,16 @@ SECTIONS
     _ek_export_fn_end = .;
     } > FLASH
 
+    /* Static component initialization registrations */
+    .ek_static_alloc :
+    {
+        . = ALIGN(4);
+        _ek_static_alloc_start = .;
+        KEEP(*(SORT(.ek_static_alloc*)))
+        . = ALIGN(4);
+        _ek_static_alloc_end = .;
+    } > FLASH
+
     /* SDRAM Data */
     .sdram_data (NOLOAD) :
     {

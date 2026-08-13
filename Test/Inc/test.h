@@ -20,5 +20,6 @@ void ringbuf_test(void);
 void stack_test(void);
 void str_test(void);
 void vec_test(void);
+void static_alloc_test(void);
 
 #endif // TEST_H
