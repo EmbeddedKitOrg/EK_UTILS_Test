@@ -76,22 +76,22 @@ void picothread_test_init(void)
 {
 #if EKCFG_PICOTHREAD_SEM == 1
     s_test_sem = ek_pt_sem_create(1);
-    s_semA = ek_pt_create("sem_A", _sem_taskA, 10, NULL);
-    s_semB = ek_pt_create("sem_B", _sem_taskB, 10, NULL);
-    s_sem_to = ek_pt_create("sem_timeout", _sem_timeout_demo, 10, NULL);
+    s_semA = ek_pt_create(_sem_taskA, 10, NULL);
+    s_semB = ek_pt_create(_sem_taskB, 10, NULL);
+    s_sem_to = ek_pt_create(_sem_timeout_demo, 10, NULL);
     EK_LOG_INFO("[sem] created: count=1, tasks=A/B/timeout");
 #endif
 
 #if EKCFG_PICOTHREAD_MSG == 1
     s_test_msg = ek_pt_msg_create(sizeof(int), 3);
-    s_sender = ek_pt_create("msg_send", _msg_sender, 10, NULL);
-    s_receiver = ek_pt_create("msg_recv", _msg_receiver, 10, NULL);
-    s_sender_fast = ek_pt_create("msg_fast", _msg_sender_fast, 10, NULL);
+    s_sender = ek_pt_create(_msg_sender, 10, NULL);
+    s_receiver = ek_pt_create(_msg_receiver, 10, NULL);
+    s_sender_fast = ek_pt_create(_msg_sender_fast, 10, NULL);
     EK_LOG_INFO("[msg] created: item_size=%u, capacity=3, tasks=send/recv/fast", (unsigned)sizeof(int));
 #endif
 
     // 控制器优先级最高，确保能及时挂起测试任务
-    s_controller = ek_pt_create("test_ctrl", _test_controller, 5, NULL);
+    s_controller = ek_pt_create(_test_controller, 5, NULL);
     EK_LOG_INFO("picothread test init done");
 }
 

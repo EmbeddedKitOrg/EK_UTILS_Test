@@ -26,9 +26,9 @@ EK_DEFINE_RINGBUF(static_ringbuf, int, 4);
 EK_DEFINE_RINGBUF_SPSC(static_spsc, int, 5);
 EK_DEFINE_PT_SEM(static_sem, 1);
 EK_DEFINE_PT_MSG(static_msg, int, 3);
-EK_DEFINE_PT(static_pt, "pt", _static_pt_cb, 10, NULL);
-EK_DEFINE_EVOKE_EVENT(static_event, "event", 0);
-EK_DEFINE_EVOKE_TASK(static_evoke_task, "event_task", _static_evoke_cb, NULL);
+EK_DEFINE_PT(static_pt, _static_pt_cb, 10, NULL);
+EK_DEFINE_EVOKE_EVENT(static_event, 0);
+EK_DEFINE_EVOKE_TASK(static_evoke_task, _static_evoke_cb, NULL);
 
 static void _fail(const char *msg)
 {
@@ -69,7 +69,7 @@ void static_alloc_test(void)
     {
         _fail("static sem not initialized");
     }
-    if (static_event.name == NULL || static_evoke_task.cb != _static_evoke_cb)
+    if (static_event.count != 0U || static_evoke_task.cb != _static_evoke_cb)
     {
         _fail("static evoke objects not initialized");
     }
