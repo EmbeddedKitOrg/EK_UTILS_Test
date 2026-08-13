@@ -1190,7 +1190,7 @@ void SystemCoreClockUpdate(void)
     uint32_t pllpsc, plln, pllsel, pllp, ck_src, idx, clk_exp;
 
     /* exponent of AHB, APB1 and APB2 clock divider */
-    const uint8_t ahb_exp[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
+    const uint8_t ahb_exp[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9 };
 
     sws = GET_BITS(RCU_CFG0, 2, 3);
     switch (sws)

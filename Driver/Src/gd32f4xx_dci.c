@@ -211,7 +211,8 @@ void dci_embedded_sync_disable(void)
 */
 void dci_sync_codes_config(uint8_t frame_start, uint8_t line_start, uint8_t line_end, uint8_t frame_end)
 {
-    DCI_SC = ((uint32_t)frame_start | ((uint32_t)line_start << 8) | ((uint32_t)line_end << 16) | ((uint32_t)frame_end << 24));
+    DCI_SC = ((uint32_t)frame_start | ((uint32_t)line_start << 8) | ((uint32_t)line_end << 16) |
+              ((uint32_t)frame_end << 24));
 }
 
 /*!
@@ -225,7 +226,8 @@ void dci_sync_codes_config(uint8_t frame_start, uint8_t line_start, uint8_t line
 */
 void dci_sync_codes_unmask_config(uint8_t frame_start, uint8_t line_start, uint8_t line_end, uint8_t frame_end)
 {
-    DCI_SCUMSK = ((uint32_t)frame_start | ((uint32_t)line_start << 8) | ((uint32_t)line_end << 16) | ((uint32_t)frame_end << 24));
+    DCI_SCUMSK = ((uint32_t)frame_start | ((uint32_t)line_start << 8) | ((uint32_t)line_end << 16) |
+                  ((uint32_t)frame_end << 24));
 }
 
 /*!
@@ -257,17 +259,23 @@ FlagStatus dci_flag_get(uint32_t flag)
 {
     uint32_t stat = 0U;
 
-    if(flag >> 31) {
+    if (flag >> 31)
+    {
         /* get flag status from DCI_STAT1 register */
         stat = DCI_STAT1;
-    } else {
+    }
+    else
+    {
         /* get flag status from DCI_STAT0 register */
         stat = DCI_STAT0;
     }
 
-    if(flag & stat) {
+    if (flag & stat)
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }
@@ -333,11 +341,12 @@ void dci_interrupt_flag_clear(uint32_t int_flag)
 */
 FlagStatus dci_interrupt_flag_get(uint32_t int_flag)
 {
-    if(RESET == (DCI_INTF & int_flag)) {
+    if (RESET == (DCI_INTF & int_flag))
+    {
         return RESET;
-    } else {
+    }
+    else
+    {
         return SET;
     }
 }
-
-

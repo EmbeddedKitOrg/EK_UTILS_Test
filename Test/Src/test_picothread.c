@@ -4,7 +4,7 @@
 EK_LOG_FILE_TAG("test_picothread");
 
 // 测试运行时长，之后控制器挂起所有任务并输出结果汇总
-#define TEST_DURATION_TICK  5000
+#define TEST_DURATION_TICK 5000
 
 // 测试结果统计
 static unsigned s_sem_ok;
@@ -87,8 +87,7 @@ void picothread_test_init(void)
     s_sender = ek_pt_create("msg_send", _msg_sender, 10, NULL);
     s_receiver = ek_pt_create("msg_recv", _msg_receiver, 10, NULL);
     s_sender_fast = ek_pt_create("msg_fast", _msg_sender_fast, 10, NULL);
-    EK_LOG_INFO("[msg] created: item_size=%u, capacity=3, tasks=send/recv/fast",
-                (unsigned)sizeof(int));
+    EK_LOG_INFO("[msg] created: item_size=%u, capacity=3, tasks=send/recv/fast", (unsigned)sizeof(int));
 #endif
 
     // 控制器优先级最高，确保能及时挂起测试任务

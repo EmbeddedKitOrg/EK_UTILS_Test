@@ -113,9 +113,12 @@ void trng_interrupt_disable(void)
 */
 FlagStatus trng_flag_get(trng_flag_enum flag)
 {
-    if(RESET != (TRNG_STAT & flag)) {
+    if (RESET != (TRNG_STAT & flag))
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }
@@ -131,9 +134,12 @@ FlagStatus trng_flag_get(trng_flag_enum flag)
 */
 FlagStatus trng_interrupt_flag_get(trng_int_flag_enum int_flag)
 {
-    if(RESET != (TRNG_STAT & int_flag)) {
+    if (RESET != (TRNG_STAT & int_flag))
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }

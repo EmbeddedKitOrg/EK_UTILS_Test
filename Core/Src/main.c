@@ -64,13 +64,13 @@ int main(void)
     }
 }
 
-EK_IO_FPUTC()
+int ek_port_io_fputc(int ch)
 {
     bsp_uart_send_data(ch);
     return ch;
 }
 
-EK_LOG_GET_TICK()
+uint32_t ek_port_log_get_tick(void)
 {
     return get_tick();
 }

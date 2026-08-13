@@ -35,7 +35,10 @@ OF SUCH DAMAGE.
 #include "gd32f4xx_can.h"
 #include <stdlib.h>
 
-#define CAN_ERROR_HANDLE(s)     do{}while(1)
+#define CAN_ERROR_HANDLE(s) \
+    do                      \
+    {                       \
+    } while (1)
 
 /*!
     \brief      deinitialize CAN
@@ -46,10 +49,13 @@ OF SUCH DAMAGE.
 */
 void can_deinit(uint32_t can_periph)
 {
-    if(CAN0 == can_periph){
+    if (CAN0 == can_periph)
+    {
         rcu_periph_reset_enable(RCU_CAN0RST);
         rcu_periph_reset_disable(RCU_CAN0RST);
-    }else{
+    }
+    else
+    {
         rcu_periph_reset_enable(RCU_CAN1RST);
         rcu_periph_reset_disable(RCU_CAN1RST);
     }
@@ -70,70 +76,74 @@ void can_struct_para_init(can_struct_type_enum type, void *p_struct)
 {
     uint8_t i;
 
-    if(NULL == p_struct) {
+    if (NULL == p_struct)
+    {
         CAN_ERROR_HANDLE("struct parameter can not be NULL \r\n");
     }
 
     /* get type of the struct */
-    switch(type) {
-    /* used for can_init() */
-    case CAN_INIT_STRUCT:
-        ((can_parameter_struct *)p_struct)->auto_bus_off_recovery = DISABLE;
-        ((can_parameter_struct *)p_struct)->auto_retrans = DISABLE;
-        ((can_parameter_struct *)p_struct)->auto_wake_up = DISABLE;
-        ((can_parameter_struct *)p_struct)->prescaler = 0x03FFU;
-        ((can_parameter_struct *)p_struct)->rec_fifo_overwrite = DISABLE;
-        ((can_parameter_struct *)p_struct)->resync_jump_width = CAN_BT_SJW_1TQ;
-        ((can_parameter_struct *)p_struct)->time_segment_1 = CAN_BT_BS1_3TQ;
-        ((can_parameter_struct *)p_struct)->time_segment_2 = CAN_BT_BS2_1TQ;
-        ((can_parameter_struct *)p_struct)->time_triggered = DISABLE;
-        ((can_parameter_struct *)p_struct)->trans_fifo_order = DISABLE;
-        ((can_parameter_struct *)p_struct)->working_mode = CAN_NORMAL_MODE;
+    switch (type)
+    {
+        /* used for can_init() */
+        case CAN_INIT_STRUCT:
+            ((can_parameter_struct *)p_struct)->auto_bus_off_recovery = DISABLE;
+            ((can_parameter_struct *)p_struct)->auto_retrans = DISABLE;
+            ((can_parameter_struct *)p_struct)->auto_wake_up = DISABLE;
+            ((can_parameter_struct *)p_struct)->prescaler = 0x03FFU;
+            ((can_parameter_struct *)p_struct)->rec_fifo_overwrite = DISABLE;
+            ((can_parameter_struct *)p_struct)->resync_jump_width = CAN_BT_SJW_1TQ;
+            ((can_parameter_struct *)p_struct)->time_segment_1 = CAN_BT_BS1_3TQ;
+            ((can_parameter_struct *)p_struct)->time_segment_2 = CAN_BT_BS2_1TQ;
+            ((can_parameter_struct *)p_struct)->time_triggered = DISABLE;
+            ((can_parameter_struct *)p_struct)->trans_fifo_order = DISABLE;
+            ((can_parameter_struct *)p_struct)->working_mode = CAN_NORMAL_MODE;
 
-        break;
-    /* used for can_filter_init() */
-    case CAN_FILTER_STRUCT:
-        ((can_filter_parameter_struct *)p_struct)->filter_bits = CAN_FILTERBITS_32BIT;
-        ((can_filter_parameter_struct *)p_struct)->filter_enable = DISABLE;
-        ((can_filter_parameter_struct *)p_struct)->filter_fifo_number = CAN_FIFO0;
-        ((can_filter_parameter_struct *)p_struct)->filter_list_high = 0x0000U;
-        ((can_filter_parameter_struct *)p_struct)->filter_list_low = 0x0000U;
-        ((can_filter_parameter_struct *)p_struct)->filter_mask_high = 0x0000U;
-        ((can_filter_parameter_struct *)p_struct)->filter_mask_low = 0x0000U;
-        ((can_filter_parameter_struct *)p_struct)->filter_mode = CAN_FILTERMODE_MASK;
-        ((can_filter_parameter_struct *)p_struct)->filter_number = 0U;
+            break;
+        /* used for can_filter_init() */
+        case CAN_FILTER_STRUCT:
+            ((can_filter_parameter_struct *)p_struct)->filter_bits = CAN_FILTERBITS_32BIT;
+            ((can_filter_parameter_struct *)p_struct)->filter_enable = DISABLE;
+            ((can_filter_parameter_struct *)p_struct)->filter_fifo_number = CAN_FIFO0;
+            ((can_filter_parameter_struct *)p_struct)->filter_list_high = 0x0000U;
+            ((can_filter_parameter_struct *)p_struct)->filter_list_low = 0x0000U;
+            ((can_filter_parameter_struct *)p_struct)->filter_mask_high = 0x0000U;
+            ((can_filter_parameter_struct *)p_struct)->filter_mask_low = 0x0000U;
+            ((can_filter_parameter_struct *)p_struct)->filter_mode = CAN_FILTERMODE_MASK;
+            ((can_filter_parameter_struct *)p_struct)->filter_number = 0U;
 
-        break;
-    /* used for can_message_transmit() */
-    case CAN_TX_MESSAGE_STRUCT:
-        for(i = 0U; i < 8U; i++) {
-            ((can_trasnmit_message_struct *)p_struct)->tx_data[i] = 0U;
-        }
+            break;
+        /* used for can_message_transmit() */
+        case CAN_TX_MESSAGE_STRUCT:
+            for (i = 0U; i < 8U; i++)
+            {
+                ((can_trasnmit_message_struct *)p_struct)->tx_data[i] = 0U;
+            }
 
-        ((can_trasnmit_message_struct *)p_struct)->tx_dlen = 0u;
-        ((can_trasnmit_message_struct *)p_struct)->tx_efid = 0U;
-        ((can_trasnmit_message_struct *)p_struct)->tx_ff = (uint8_t)CAN_FF_STANDARD;
-        ((can_trasnmit_message_struct *)p_struct)->tx_ft = (uint8_t)CAN_FT_DATA;
-        ((can_trasnmit_message_struct *)p_struct)->tx_sfid = 0U;
+            ((can_trasnmit_message_struct *)p_struct)->tx_dlen = 0u;
+            ((can_trasnmit_message_struct *)p_struct)->tx_efid = 0U;
+            ((can_trasnmit_message_struct *)p_struct)->tx_ff = (uint8_t)CAN_FF_STANDARD;
+            ((can_trasnmit_message_struct *)p_struct)->tx_ft = (uint8_t)CAN_FT_DATA;
+            ((can_trasnmit_message_struct *)p_struct)->tx_sfid = 0U;
 
-        break;
-    /* used for can_message_receive() */
-    case CAN_RX_MESSAGE_STRUCT:
-        for(i = 0U; i < 8U; i++) {
-            ((can_receive_message_struct *)p_struct)->rx_data[i] = 0U;
-        }
+            break;
+        /* used for can_message_receive() */
+        case CAN_RX_MESSAGE_STRUCT:
+            for (i = 0U; i < 8U; i++)
+            {
+                ((can_receive_message_struct *)p_struct)->rx_data[i] = 0U;
+            }
 
-        ((can_receive_message_struct *)p_struct)->rx_dlen = 0U;
-        ((can_receive_message_struct *)p_struct)->rx_efid = 0U;
-        ((can_receive_message_struct *)p_struct)->rx_ff = (uint8_t)CAN_FF_STANDARD;
-        ((can_receive_message_struct *)p_struct)->rx_fi = 0U;
-        ((can_receive_message_struct *)p_struct)->rx_ft = (uint8_t)CAN_FT_DATA;
-        ((can_receive_message_struct *)p_struct)->rx_sfid = 0U;
+            ((can_receive_message_struct *)p_struct)->rx_dlen = 0U;
+            ((can_receive_message_struct *)p_struct)->rx_efid = 0U;
+            ((can_receive_message_struct *)p_struct)->rx_ff = (uint8_t)CAN_FF_STANDARD;
+            ((can_receive_message_struct *)p_struct)->rx_fi = 0U;
+            ((can_receive_message_struct *)p_struct)->rx_ft = (uint8_t)CAN_FT_DATA;
+            ((can_receive_message_struct *)p_struct)->rx_sfid = 0U;
 
-        break;
+            break;
 
-    default:
-        CAN_ERROR_HANDLE("parameter is invalid \r\n");
+        default:
+            CAN_ERROR_HANDLE("parameter is invalid \r\n");
     }
 }
 
@@ -166,65 +176,89 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct *can_parameter_init
     /* enable initialize mode */
     CAN_CTL(can_periph) |= CAN_CTL_IWMOD;
     /* wait ACK */
-    while((CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS)) && (0U != timeout)) {
+    while ((CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS)) && (0U != timeout))
+    {
         timeout--;
     }
     /* check initialize working success */
-    if(CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS)) {
+    if (CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS))
+    {
         flag = ERROR;
-    } else {
+    }
+    else
+    {
         /* set the bit timing register */
-        CAN_BT(can_periph) = (BT_MODE((uint32_t)can_parameter_init->working_mode) | \
-                              BT_SJW((uint32_t)can_parameter_init->resync_jump_width) | \
-                              BT_BS1((uint32_t)can_parameter_init->time_segment_1) | \
-                              BT_BS2((uint32_t)can_parameter_init->time_segment_2) | \
+        CAN_BT(can_periph) = (BT_MODE((uint32_t)can_parameter_init->working_mode) |
+                              BT_SJW((uint32_t)can_parameter_init->resync_jump_width) |
+                              BT_BS1((uint32_t)can_parameter_init->time_segment_1) |
+                              BT_BS2((uint32_t)can_parameter_init->time_segment_2) |
                               BT_BAUDPSC(((uint32_t)(can_parameter_init->prescaler) - 1U)));
 
         /* time trigger communication mode */
-        if(ENABLE == can_parameter_init->time_triggered) {
+        if (ENABLE == can_parameter_init->time_triggered)
+        {
             CAN_CTL(can_periph) |= CAN_CTL_TTC;
-        } else {
+        }
+        else
+        {
             CAN_CTL(can_periph) &= ~CAN_CTL_TTC;
         }
         /* automatic bus-off management */
-        if(ENABLE == can_parameter_init->auto_bus_off_recovery) {
+        if (ENABLE == can_parameter_init->auto_bus_off_recovery)
+        {
             CAN_CTL(can_periph) |= CAN_CTL_ABOR;
-        } else {
+        }
+        else
+        {
             CAN_CTL(can_periph) &= ~CAN_CTL_ABOR;
         }
         /* automatic wakeup mode */
-        if(ENABLE == can_parameter_init->auto_wake_up) {
+        if (ENABLE == can_parameter_init->auto_wake_up)
+        {
             CAN_CTL(can_periph) |= CAN_CTL_AWU;
-        } else {
+        }
+        else
+        {
             CAN_CTL(can_periph) &= ~CAN_CTL_AWU;
         }
         /* automatic retransmission mode */
-        if(ENABLE == can_parameter_init->auto_retrans) {
+        if (ENABLE == can_parameter_init->auto_retrans)
+        {
             CAN_CTL(can_periph) &= ~CAN_CTL_ARD;
-        } else {
+        }
+        else
+        {
             CAN_CTL(can_periph) |= CAN_CTL_ARD;
         }
         /* receive FIFO overwrite mode */
-        if(ENABLE == can_parameter_init->rec_fifo_overwrite) {
+        if (ENABLE == can_parameter_init->rec_fifo_overwrite)
+        {
             CAN_CTL(can_periph) &= ~CAN_CTL_RFOD;
-        } else {
+        }
+        else
+        {
             CAN_CTL(can_periph) |= CAN_CTL_RFOD;
         }
         /* transmit FIFO order */
-        if(ENABLE == can_parameter_init->trans_fifo_order) {
+        if (ENABLE == can_parameter_init->trans_fifo_order)
+        {
             CAN_CTL(can_periph) |= CAN_CTL_TFO;
-        } else {
+        }
+        else
+        {
             CAN_CTL(can_periph) &= ~CAN_CTL_TFO;
         }
         /* disable initialize mode */
         CAN_CTL(can_periph) &= ~CAN_CTL_IWMOD;
         timeout = CAN_TIMEOUT;
         /* wait the ACK */
-        while((CAN_STAT_IWS == (CAN_STAT(can_periph) & CAN_STAT_IWS)) && (0U != timeout)) {
+        while ((CAN_STAT_IWS == (CAN_STAT(can_periph) & CAN_STAT_IWS)) && (0U != timeout))
+        {
             timeout--;
         }
         /* check exit initialize mode */
-        if(0U != timeout) {
+        if (0U != timeout)
+        {
             flag = SUCCESS;
         }
     }
@@ -257,53 +291,61 @@ void can_filter_init(can_filter_parameter_struct *can_filter_parameter_init)
     CAN_FW(CAN0) &= ~(uint32_t)val;
 
     /* filter 16 bits */
-    if(CAN_FILTERBITS_16BIT == can_filter_parameter_init->filter_bits) {
+    if (CAN_FILTERBITS_16BIT == can_filter_parameter_init->filter_bits)
+    {
         /* set filter 16 bits */
         CAN_FSCFG(CAN0) &= ~(uint32_t)val;
         /* first 16 bits list and first 16 bits mask or first 16 bits list and second 16 bits list */
-        CAN_FDATA0(CAN0, can_filter_parameter_init->filter_number) = \
-                FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_low) & CAN_FILTER_MASK_16BITS) | \
-                FDATA_MASK_LOW((can_filter_parameter_init->filter_list_low) & CAN_FILTER_MASK_16BITS);
+        CAN_FDATA0(CAN0, can_filter_parameter_init->filter_number) =
+            FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_low) & CAN_FILTER_MASK_16BITS) |
+            FDATA_MASK_LOW((can_filter_parameter_init->filter_list_low) & CAN_FILTER_MASK_16BITS);
         /* second 16 bits list and second 16 bits mask or third 16 bits list and fourth 16 bits list */
-        CAN_FDATA1(CAN0, can_filter_parameter_init->filter_number) = \
-                FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_high) & CAN_FILTER_MASK_16BITS) | \
-                FDATA_MASK_LOW((can_filter_parameter_init->filter_list_high) & CAN_FILTER_MASK_16BITS);
+        CAN_FDATA1(CAN0, can_filter_parameter_init->filter_number) =
+            FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_high) & CAN_FILTER_MASK_16BITS) |
+            FDATA_MASK_LOW((can_filter_parameter_init->filter_list_high) & CAN_FILTER_MASK_16BITS);
     }
     /* filter 32 bits */
-    if(CAN_FILTERBITS_32BIT == can_filter_parameter_init->filter_bits) {
+    if (CAN_FILTERBITS_32BIT == can_filter_parameter_init->filter_bits)
+    {
         /* set filter 32 bits */
         CAN_FSCFG(CAN0) |= (uint32_t)val;
         /* 32 bits list or first 32 bits list */
-        CAN_FDATA0(CAN0, can_filter_parameter_init->filter_number) = \
-                FDATA_MASK_HIGH((can_filter_parameter_init->filter_list_high) & CAN_FILTER_MASK_16BITS) |
-                FDATA_MASK_LOW((can_filter_parameter_init->filter_list_low) & CAN_FILTER_MASK_16BITS);
+        CAN_FDATA0(CAN0, can_filter_parameter_init->filter_number) =
+            FDATA_MASK_HIGH((can_filter_parameter_init->filter_list_high) & CAN_FILTER_MASK_16BITS) |
+            FDATA_MASK_LOW((can_filter_parameter_init->filter_list_low) & CAN_FILTER_MASK_16BITS);
         /* 32 bits mask or second 32 bits list */
-        CAN_FDATA1(CAN0, can_filter_parameter_init->filter_number) = \
-                FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_high) & CAN_FILTER_MASK_16BITS) |
-                FDATA_MASK_LOW((can_filter_parameter_init->filter_mask_low) & CAN_FILTER_MASK_16BITS);
+        CAN_FDATA1(CAN0, can_filter_parameter_init->filter_number) =
+            FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_high) & CAN_FILTER_MASK_16BITS) |
+            FDATA_MASK_LOW((can_filter_parameter_init->filter_mask_low) & CAN_FILTER_MASK_16BITS);
     }
 
     /* filter mode */
-    if(CAN_FILTERMODE_MASK == can_filter_parameter_init->filter_mode) {
+    if (CAN_FILTERMODE_MASK == can_filter_parameter_init->filter_mode)
+    {
         /* mask mode */
         CAN_FMCFG(CAN0) &= ~(uint32_t)val;
-    } else {
+    }
+    else
+    {
         /* list mode */
         CAN_FMCFG(CAN0) |= (uint32_t)val;
     }
 
     /* filter FIFO */
-    if(CAN_FIFO0 == (can_filter_parameter_init->filter_fifo_number)) {
+    if (CAN_FIFO0 == (can_filter_parameter_init->filter_fifo_number))
+    {
         /* FIFO0 */
         CAN_FAFIFO(CAN0) &= ~(uint32_t)val;
-    } else {
+    }
+    else
+    {
         /* FIFO1 */
         CAN_FAFIFO(CAN0) |= (uint32_t)val;
     }
 
     /* filter working */
-    if(ENABLE == can_filter_parameter_init->filter_enable) {
-
+    if (ENABLE == can_filter_parameter_init->filter_enable)
+    {
         CAN_FW(CAN0) |= (uint32_t)val;
     }
 
@@ -342,9 +384,12 @@ void can_debug_freeze_enable(uint32_t can_periph)
     /* set DFZ bit */
     CAN_CTL(can_periph) |= CAN_CTL_DFZ;
 
-    if(CAN0 == can_periph) {
+    if (CAN0 == can_periph)
+    {
         dbg_periph_enable(DBG_CAN0_HOLD);
-    }else{
+    }
+    else
+    {
         dbg_periph_enable(DBG_CAN1_HOLD);
     }
 }
@@ -361,9 +406,12 @@ void can_debug_freeze_disable(uint32_t can_periph)
     /* set DFZ bit */
     CAN_CTL(can_periph) &= ~CAN_CTL_DFZ;
 
-    if(CAN0 == can_periph){
+    if (CAN0 == can_periph)
+    {
         dbg_periph_disable(DBG_CAN0_HOLD);
-    }else{
+    }
+    else
+    {
         dbg_periph_disable(DBG_CAN1_HOLD);
     }
 }
@@ -382,7 +430,8 @@ void can_time_trigger_mode_enable(uint32_t can_periph)
     /* enable the TTC mode */
     CAN_CTL(can_periph) |= CAN_CTL_TTC;
     /* enable time stamp */
-    for(mailbox_number = 0U; mailbox_number < 3U; mailbox_number++) {
+    for (mailbox_number = 0U; mailbox_number < 3U; mailbox_number++)
+    {
         CAN_TMP(can_periph, mailbox_number) |= CAN_TMP_TSEN;
     }
 }
@@ -401,7 +450,8 @@ void can_time_trigger_mode_disable(uint32_t can_periph)
     /* disable the TTC mode */
     CAN_CTL(can_periph) &= ~CAN_CTL_TTC;
     /* reset TSEN bits */
-    for(mailbox_number = 0U; mailbox_number < 3U; mailbox_number++) {
+    for (mailbox_number = 0U; mailbox_number < 3U; mailbox_number++)
+    {
         CAN_TMP(can_periph, mailbox_number) &= ~CAN_TMP_TSEN;
     }
 }
@@ -425,49 +475,58 @@ uint8_t can_message_transmit(uint32_t can_periph, can_trasnmit_message_struct *t
     uint8_t mailbox_number = CAN_MAILBOX0;
 
     /* select one empty mailbox */
-    if(CAN_TSTAT_TME0 == (CAN_TSTAT(can_periph)&CAN_TSTAT_TME0)) {
+    if (CAN_TSTAT_TME0 == (CAN_TSTAT(can_periph) & CAN_TSTAT_TME0))
+    {
         mailbox_number = CAN_MAILBOX0;
-    } else if(CAN_TSTAT_TME1 == (CAN_TSTAT(can_periph)&CAN_TSTAT_TME1)) {
+    }
+    else if (CAN_TSTAT_TME1 == (CAN_TSTAT(can_periph) & CAN_TSTAT_TME1))
+    {
         mailbox_number = CAN_MAILBOX1;
-    } else if(CAN_TSTAT_TME2 == (CAN_TSTAT(can_periph)&CAN_TSTAT_TME2)) {
+    }
+    else if (CAN_TSTAT_TME2 == (CAN_TSTAT(can_periph) & CAN_TSTAT_TME2))
+    {
         mailbox_number = CAN_MAILBOX2;
-    } else {
+    }
+    else
+    {
         mailbox_number = CAN_NOMAILBOX;
     }
     /* return no mailbox empty */
-    if(CAN_NOMAILBOX == mailbox_number) {
+    if (CAN_NOMAILBOX == mailbox_number)
+    {
         return CAN_NOMAILBOX;
     }
 
     CAN_TMI(can_periph, mailbox_number) &= CAN_TMI_TEN;
-    if(CAN_FF_STANDARD == transmit_message->tx_ff) {
+    if (CAN_FF_STANDARD == transmit_message->tx_ff)
+    {
         /* set transmit mailbox standard identifier */
-        CAN_TMI(can_periph, mailbox_number) |= (uint32_t)(TMI_SFID(transmit_message->tx_sfid) | \
-                                               transmit_message->tx_ft);
-    } else {
+        CAN_TMI(can_periph, mailbox_number) |=
+            (uint32_t)(TMI_SFID(transmit_message->tx_sfid) | transmit_message->tx_ft);
+    }
+    else
+    {
         /* set transmit mailbox extended identifier */
-        CAN_TMI(can_periph, mailbox_number) |= (uint32_t)(TMI_EFID(transmit_message->tx_efid) | \
-                                               transmit_message->tx_ff | \
-                                               transmit_message->tx_ft);
+        CAN_TMI(can_periph, mailbox_number) |=
+            (uint32_t)(TMI_EFID(transmit_message->tx_efid) | transmit_message->tx_ff | transmit_message->tx_ft);
     }
     /* set the data length */
     CAN_TMP(can_periph, mailbox_number) &= ~CAN_TMP_DLENC;
-    
+
     /* Classic CAN frame data lenth does not exceed 8 */
-    if (transmit_message->tx_dlen > 8U) {
+    if (transmit_message->tx_dlen > 8U)
+    {
         transmit_message->tx_dlen = 8U;
     }
-    
+
     CAN_TMP(can_periph, mailbox_number) |= transmit_message->tx_dlen;
     /* set the data */
-    CAN_TMDATA0(can_periph, mailbox_number) = TMDATA0_DB3(transmit_message->tx_data[3]) | \
-            TMDATA0_DB2(transmit_message->tx_data[2]) | \
-            TMDATA0_DB1(transmit_message->tx_data[1]) | \
-            TMDATA0_DB0(transmit_message->tx_data[0]);
-    CAN_TMDATA1(can_periph, mailbox_number) = TMDATA1_DB7(transmit_message->tx_data[7]) | \
-            TMDATA1_DB6(transmit_message->tx_data[6]) | \
-            TMDATA1_DB5(transmit_message->tx_data[5]) | \
-            TMDATA1_DB4(transmit_message->tx_data[4]);
+    CAN_TMDATA0(can_periph, mailbox_number) =
+        TMDATA0_DB3(transmit_message->tx_data[3]) | TMDATA0_DB2(transmit_message->tx_data[2]) |
+        TMDATA0_DB1(transmit_message->tx_data[1]) | TMDATA0_DB0(transmit_message->tx_data[0]);
+    CAN_TMDATA1(can_periph, mailbox_number) =
+        TMDATA1_DB7(transmit_message->tx_data[7]) | TMDATA1_DB6(transmit_message->tx_data[6]) |
+        TMDATA1_DB5(transmit_message->tx_data[5]) | TMDATA1_DB4(transmit_message->tx_data[4]);
     /* enable transmission */
     CAN_TMI(can_periph, mailbox_number) |= CAN_TMI_TEN;
 
@@ -490,45 +549,47 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
     uint32_t val = 0U;
 
     /* check selected mailbox state */
-    switch(mailbox_number) {
-    /* mailbox0 */
-    case CAN_MAILBOX0:
-        val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF0 | CAN_TSTAT_MTFNERR0 | CAN_TSTAT_TME0);
-        break;
-    /* mailbox1 */
-    case CAN_MAILBOX1:
-        val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF1 | CAN_TSTAT_MTFNERR1 | CAN_TSTAT_TME1);
-        break;
-    /* mailbox2 */
-    case CAN_MAILBOX2:
-        val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF2 | CAN_TSTAT_MTFNERR2 | CAN_TSTAT_TME2);
-        break;
-    default:
-        val = CAN_TRANSMIT_FAILED;
-        break;
+    switch (mailbox_number)
+    {
+        /* mailbox0 */
+        case CAN_MAILBOX0:
+            val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF0 | CAN_TSTAT_MTFNERR0 | CAN_TSTAT_TME0);
+            break;
+        /* mailbox1 */
+        case CAN_MAILBOX1:
+            val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF1 | CAN_TSTAT_MTFNERR1 | CAN_TSTAT_TME1);
+            break;
+        /* mailbox2 */
+        case CAN_MAILBOX2:
+            val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF2 | CAN_TSTAT_MTFNERR2 | CAN_TSTAT_TME2);
+            break;
+        default:
+            val = CAN_TRANSMIT_FAILED;
+            break;
     }
 
-    switch(val) {
-    /* transmit pending */
-    case(CAN_STATE_PENDING):
-        state = CAN_TRANSMIT_PENDING;
-        break;
-    /* mailbox0 transmit succeeded */
-    case(CAN_TSTAT_MTF0 | CAN_TSTAT_MTFNERR0 | CAN_TSTAT_TME0):
-        state = CAN_TRANSMIT_OK;
-        break;
-    /* mailbox1 transmit succeeded */
-    case(CAN_TSTAT_MTF1 | CAN_TSTAT_MTFNERR1 | CAN_TSTAT_TME1):
-        state = CAN_TRANSMIT_OK;
-        break;
-    /* mailbox2 transmit succeeded */
-    case(CAN_TSTAT_MTF2 | CAN_TSTAT_MTFNERR2 | CAN_TSTAT_TME2):
-        state = CAN_TRANSMIT_OK;
-        break;
-    /* transmit failed */
-    default:
-        state = CAN_TRANSMIT_FAILED;
-        break;
+    switch (val)
+    {
+        /* transmit pending */
+        case (CAN_STATE_PENDING):
+            state = CAN_TRANSMIT_PENDING;
+            break;
+        /* mailbox0 transmit succeeded */
+        case (CAN_TSTAT_MTF0 | CAN_TSTAT_MTFNERR0 | CAN_TSTAT_TME0):
+            state = CAN_TRANSMIT_OK;
+            break;
+        /* mailbox1 transmit succeeded */
+        case (CAN_TSTAT_MTF1 | CAN_TSTAT_MTFNERR1 | CAN_TSTAT_TME1):
+            state = CAN_TRANSMIT_OK;
+            break;
+        /* mailbox2 transmit succeeded */
+        case (CAN_TSTAT_MTF2 | CAN_TSTAT_MTFNERR2 | CAN_TSTAT_TME2):
+            state = CAN_TRANSMIT_OK;
+            break;
+        /* transmit failed */
+        default:
+            state = CAN_TRANSMIT_FAILED;
+            break;
     }
     return state;
 }
@@ -545,19 +606,29 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
 */
 void can_transmission_stop(uint32_t can_periph, uint8_t mailbox_number)
 {
-    if(CAN_MAILBOX0 == mailbox_number) {
+    if (CAN_MAILBOX0 == mailbox_number)
+    {
         CAN_TSTAT(can_periph) |= CAN_TSTAT_MST0;
-        while(CAN_TSTAT_MST0 == (CAN_TSTAT(can_periph) & CAN_TSTAT_MST0)) {
+        while (CAN_TSTAT_MST0 == (CAN_TSTAT(can_periph) & CAN_TSTAT_MST0))
+        {
         }
-    } else if(CAN_MAILBOX1 == mailbox_number) {
+    }
+    else if (CAN_MAILBOX1 == mailbox_number)
+    {
         CAN_TSTAT(can_periph) |= CAN_TSTAT_MST1;
-        while(CAN_TSTAT_MST1 == (CAN_TSTAT(can_periph) & CAN_TSTAT_MST1)) {
+        while (CAN_TSTAT_MST1 == (CAN_TSTAT(can_periph) & CAN_TSTAT_MST1))
+        {
         }
-    } else if(CAN_MAILBOX2 == mailbox_number) {
+    }
+    else if (CAN_MAILBOX2 == mailbox_number)
+    {
         CAN_TSTAT(can_periph) |= CAN_TSTAT_MST2;
-        while(CAN_TSTAT_MST2 == (CAN_TSTAT(can_periph) & CAN_TSTAT_MST2)) {
+        while (CAN_TSTAT_MST2 == (CAN_TSTAT(can_periph) & CAN_TSTAT_MST2))
+        {
         }
-    } else {
+    }
+    else
+    {
         /* illegal parameters */
     }
 }
@@ -582,10 +653,13 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
 {
     /* get the frame format */
     receive_message->rx_ff = (uint8_t)(CAN_RFIFOMI_FF & CAN_RFIFOMI(can_periph, fifo_number));
-    if(CAN_FF_STANDARD == receive_message->rx_ff) {
+    if (CAN_FF_STANDARD == receive_message->rx_ff)
+    {
         /* get standard identifier */
         receive_message->rx_sfid = (uint32_t)(GET_RFIFOMI_SFID(CAN_RFIFOMI(can_periph, fifo_number)));
-    } else {
+    }
+    else
+    {
         /* get extended identifier */
         receive_message->rx_efid = (uint32_t)(GET_RFIFOMI_EFID(CAN_RFIFOMI(can_periph, fifo_number)));
     }
@@ -598,19 +672,22 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
     receive_message->rx_dlen = (uint8_t)(GET_RFIFOMP_DLENC(CAN_RFIFOMP(can_periph, fifo_number)));
 
     /* receive data */
-    receive_message -> rx_data[0] = (uint8_t)(GET_RFIFOMDATA0_DB0(CAN_RFIFOMDATA0(can_periph, fifo_number)));
-    receive_message -> rx_data[1] = (uint8_t)(GET_RFIFOMDATA0_DB1(CAN_RFIFOMDATA0(can_periph, fifo_number)));
-    receive_message -> rx_data[2] = (uint8_t)(GET_RFIFOMDATA0_DB2(CAN_RFIFOMDATA0(can_periph, fifo_number)));
-    receive_message -> rx_data[3] = (uint8_t)(GET_RFIFOMDATA0_DB3(CAN_RFIFOMDATA0(can_periph, fifo_number)));
-    receive_message -> rx_data[4] = (uint8_t)(GET_RFIFOMDATA1_DB4(CAN_RFIFOMDATA1(can_periph, fifo_number)));
-    receive_message -> rx_data[5] = (uint8_t)(GET_RFIFOMDATA1_DB5(CAN_RFIFOMDATA1(can_periph, fifo_number)));
-    receive_message -> rx_data[6] = (uint8_t)(GET_RFIFOMDATA1_DB6(CAN_RFIFOMDATA1(can_periph, fifo_number)));
-    receive_message -> rx_data[7] = (uint8_t)(GET_RFIFOMDATA1_DB7(CAN_RFIFOMDATA1(can_periph, fifo_number)));
+    receive_message->rx_data[0] = (uint8_t)(GET_RFIFOMDATA0_DB0(CAN_RFIFOMDATA0(can_periph, fifo_number)));
+    receive_message->rx_data[1] = (uint8_t)(GET_RFIFOMDATA0_DB1(CAN_RFIFOMDATA0(can_periph, fifo_number)));
+    receive_message->rx_data[2] = (uint8_t)(GET_RFIFOMDATA0_DB2(CAN_RFIFOMDATA0(can_periph, fifo_number)));
+    receive_message->rx_data[3] = (uint8_t)(GET_RFIFOMDATA0_DB3(CAN_RFIFOMDATA0(can_periph, fifo_number)));
+    receive_message->rx_data[4] = (uint8_t)(GET_RFIFOMDATA1_DB4(CAN_RFIFOMDATA1(can_periph, fifo_number)));
+    receive_message->rx_data[5] = (uint8_t)(GET_RFIFOMDATA1_DB5(CAN_RFIFOMDATA1(can_periph, fifo_number)));
+    receive_message->rx_data[6] = (uint8_t)(GET_RFIFOMDATA1_DB6(CAN_RFIFOMDATA1(can_periph, fifo_number)));
+    receive_message->rx_data[7] = (uint8_t)(GET_RFIFOMDATA1_DB7(CAN_RFIFOMDATA1(can_periph, fifo_number)));
 
     /* release FIFO */
-    if(CAN_FIFO0 == fifo_number) {
+    if (CAN_FIFO0 == fifo_number)
+    {
         CAN_RFIFO0(can_periph) |= CAN_RFIFO0_RFD0;
-    } else {
+    }
+    else
+    {
         CAN_RFIFO1(can_periph) |= CAN_RFIFO1_RFD1;
     }
 }
@@ -627,11 +704,16 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
 */
 void can_fifo_release(uint32_t can_periph, uint8_t fifo_number)
 {
-    if(CAN_FIFO0 == fifo_number) {
+    if (CAN_FIFO0 == fifo_number)
+    {
         CAN_RFIFO0(can_periph) |= CAN_RFIFO0_RFD0;
-    } else if(CAN_FIFO1 == fifo_number) {
+    }
+    else if (CAN_FIFO1 == fifo_number)
+    {
         CAN_RFIFO1(can_periph) |= CAN_RFIFO1_RFD1;
-    } else {
+    }
+    else
+    {
         /* illegal parameters */
         CAN_ERROR_HANDLE("CAN FIFO NUM is invalid \r\n");
     }
@@ -651,13 +733,18 @@ uint8_t can_receive_message_length_get(uint32_t can_periph, uint8_t fifo_number)
 {
     uint8_t val = 0U;
 
-    if(CAN_FIFO0 == fifo_number) {
+    if (CAN_FIFO0 == fifo_number)
+    {
         /* FIFO0 */
         val = (uint8_t)(CAN_RFIFO0(can_periph) & CAN_RFIF_RFL_MASK);
-    } else if(CAN_FIFO1 == fifo_number) {
+    }
+    else if (CAN_FIFO1 == fifo_number)
+    {
         /* FIFO1 */
         val = (uint8_t)(CAN_RFIFO1(can_periph) & CAN_RFIF_RFL_MASK);
-    } else {
+    }
+    else
+    {
         /* illegal parameters */
     }
     return val;
@@ -681,47 +768,66 @@ ErrStatus can_working_mode_set(uint32_t can_periph, uint8_t working_mode)
     /* timeout for IWS or also for SLPWS bits */
     uint32_t timeout = CAN_TIMEOUT;
 
-    if(CAN_MODE_INITIALIZE == working_mode) {
+    if (CAN_MODE_INITIALIZE == working_mode)
+    {
         /* disable sleep mode */
         CAN_CTL(can_periph) &= (~(uint32_t)CAN_CTL_SLPWMOD);
         /* set initialize mode */
         CAN_CTL(can_periph) |= (uint8_t)CAN_CTL_IWMOD;
         /* wait the acknowledge */
-        while((CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS)) && (0U != timeout)) {
+        while ((CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS)) && (0U != timeout))
+        {
             timeout--;
         }
-        if(CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS)) {
+        if (CAN_STAT_IWS != (CAN_STAT(can_periph) & CAN_STAT_IWS))
+        {
             flag = ERROR;
-        } else {
+        }
+        else
+        {
             flag = SUCCESS;
         }
-    } else if(CAN_MODE_NORMAL == working_mode) {
+    }
+    else if (CAN_MODE_NORMAL == working_mode)
+    {
         /* enter normal mode */
         CAN_CTL(can_periph) &= ~(uint32_t)(CAN_CTL_SLPWMOD | CAN_CTL_IWMOD);
         /* wait the acknowledge */
-        while((0U != (CAN_STAT(can_periph) & (CAN_STAT_IWS | CAN_STAT_SLPWS))) && (0U != timeout)) {
+        while ((0U != (CAN_STAT(can_periph) & (CAN_STAT_IWS | CAN_STAT_SLPWS))) && (0U != timeout))
+        {
             timeout--;
         }
-        if(0U != (CAN_STAT(can_periph) & (CAN_STAT_IWS | CAN_STAT_SLPWS))) {
+        if (0U != (CAN_STAT(can_periph) & (CAN_STAT_IWS | CAN_STAT_SLPWS)))
+        {
             flag = ERROR;
-        } else {
+        }
+        else
+        {
             flag = SUCCESS;
         }
-    } else if(CAN_MODE_SLEEP == working_mode) {
+    }
+    else if (CAN_MODE_SLEEP == working_mode)
+    {
         /* disable initialize mode */
         CAN_CTL(can_periph) &= (~(uint32_t)CAN_CTL_IWMOD);
         /* set sleep mode */
         CAN_CTL(can_periph) |= (uint8_t)CAN_CTL_SLPWMOD;
         /* wait the acknowledge */
-        while((CAN_STAT_SLPWS != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) && (0U != timeout)) {
+        while ((CAN_STAT_SLPWS != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) && (0U != timeout))
+        {
             timeout--;
         }
-        if(CAN_STAT_SLPWS != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) {
+        if (CAN_STAT_SLPWS != (CAN_STAT(can_periph) & CAN_STAT_SLPWS))
+        {
             flag = ERROR;
-        } else {
+        }
+        else
+        {
             flag = SUCCESS;
         }
-    } else {
+    }
+    else
+    {
         flag = ERROR;
     }
     return flag;
@@ -742,13 +848,17 @@ ErrStatus can_wakeup(uint32_t can_periph)
     /* wakeup */
     CAN_CTL(can_periph) &= ~CAN_CTL_SLPWMOD;
 
-    while((0U != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) && (0x00U != timeout)) {
+    while ((0U != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) && (0x00U != timeout))
+    {
         timeout--;
     }
     /* check state */
-    if(0U != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) {
+    if (0U != (CAN_STAT(can_periph) & CAN_STAT_SLPWS))
+    {
         flag = ERROR;
-    } else {
+    }
+    else
+    {
         flag = SUCCESS;
     }
     return flag;
@@ -856,9 +966,12 @@ uint8_t can_transmit_error_number_get(uint32_t can_periph)
 FlagStatus can_flag_get(uint32_t can_periph, can_flag_enum flag)
 {
     /* get flag and interrupt enable state */
-    if(RESET != (CAN_REG_VAL(can_periph, flag) & BIT(CAN_BIT_POS(flag)))) {
+    if (RESET != (CAN_REG_VAL(can_periph, flag) & BIT(CAN_BIT_POS(flag))))
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }
@@ -983,20 +1096,30 @@ FlagStatus can_interrupt_flag_get(uint32_t can_periph, can_interrupt_flag_enum f
     uint32_t ret2 = RESET;
 
     /* get the status of interrupt flag */
-    if(flag == CAN_INT_FLAG_RFL0) {
+    if (flag == CAN_INT_FLAG_RFL0)
+    {
         ret1 = can_receive_message_length_get(can_periph, CAN_FIFO0);
-    } else if(flag == CAN_INT_FLAG_RFL1) {
+    }
+    else if (flag == CAN_INT_FLAG_RFL1)
+    {
         ret1 = can_receive_message_length_get(can_periph, CAN_FIFO1);
-    } else if(flag == CAN_INT_FLAG_ERRN) {
+    }
+    else if (flag == CAN_INT_FLAG_ERRN)
+    {
         ret1 = can_error_get(can_periph);
-    } else {
+    }
+    else
+    {
         ret1 = CAN_REG_VALS(can_periph, flag) & BIT(CAN_BIT_POS0(flag));
     }
     /* get the status of interrupt enable bit */
     ret2 = CAN_INTEN(can_periph) & BIT(CAN_BIT_POS1(flag));
-    if(ret1 && ret2) {
+    if (ret1 && ret2)
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }

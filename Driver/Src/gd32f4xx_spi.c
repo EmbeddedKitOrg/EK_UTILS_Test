@@ -32,17 +32,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 OF SUCH DAMAGE.
 */
 
-
 #include "gd32f4xx_spi.h"
 #include "gd32f4xx_rcu.h"
 
 /* SPI/I2S parameter initialization mask */
-#define SPI_INIT_MASK                   ((uint32_t)0x00003040U)  /*!< SPI parameter initialization mask */
-#define I2S_INIT_MASK                   ((uint32_t)0x0000F047U)  /*!< I2S parameter initialization mask */
-#define I2S_FULL_DUPLEX_MASK            ((uint32_t)0x00000480U)  /*!< I2S full duples mode configure parameter initialization mask */
+#define SPI_INIT_MASK ((uint32_t)0x00003040U) /*!< SPI parameter initialization mask */
+#define I2S_INIT_MASK ((uint32_t)0x0000F047U) /*!< I2S parameter initialization mask */
+#define I2S_FULL_DUPLEX_MASK \
+    ((uint32_t)0x00000480U) /*!< I2S full duples mode configure parameter initialization mask */
 
 /* default value */
-#define SPI_I2SPSC_DEFAULT_VALUE        ((uint32_t)0x00000002U)  /*!< default value of SPI_I2SPSC register */
+#define SPI_I2SPSC_DEFAULT_VALUE ((uint32_t)0x00000002U) /*!< default value of SPI_I2SPSC register */
 
 /*!
     \brief      deinitialize SPI and I2S
@@ -52,39 +52,40 @@ OF SUCH DAMAGE.
 */
 void spi_i2s_deinit(uint32_t spi_periph)
 {
-    switch(spi_periph) {
-    case SPI0:
-        /* reset SPI0 */
-        rcu_periph_reset_enable(RCU_SPI0RST);
-        rcu_periph_reset_disable(RCU_SPI0RST);
-        break;
-    case SPI1:
-        /* reset SPI1,I2S1 and I2S1_ADD */
-        rcu_periph_reset_enable(RCU_SPI1RST);
-        rcu_periph_reset_disable(RCU_SPI1RST);
-        break;
-    case SPI2:
-        /* reset SPI2,I2S2 and I2S2_ADD */
-        rcu_periph_reset_enable(RCU_SPI2RST);
-        rcu_periph_reset_disable(RCU_SPI2RST);
-        break;
-    case SPI3:
-        /* reset SPI3 */
-        rcu_periph_reset_enable(RCU_SPI3RST);
-        rcu_periph_reset_disable(RCU_SPI3RST);
-        break;
-    case SPI4:
-        /* reset SPI4 */
-        rcu_periph_reset_enable(RCU_SPI4RST);
-        rcu_periph_reset_disable(RCU_SPI4RST);
-        break;
-    case SPI5:
-        /* reset SPI5 */
-        rcu_periph_reset_enable(RCU_SPI5RST);
-        rcu_periph_reset_disable(RCU_SPI5RST);
-        break;
-    default :
-        break;
+    switch (spi_periph)
+    {
+        case SPI0:
+            /* reset SPI0 */
+            rcu_periph_reset_enable(RCU_SPI0RST);
+            rcu_periph_reset_disable(RCU_SPI0RST);
+            break;
+        case SPI1:
+            /* reset SPI1,I2S1 and I2S1_ADD */
+            rcu_periph_reset_enable(RCU_SPI1RST);
+            rcu_periph_reset_disable(RCU_SPI1RST);
+            break;
+        case SPI2:
+            /* reset SPI2,I2S2 and I2S2_ADD */
+            rcu_periph_reset_enable(RCU_SPI2RST);
+            rcu_periph_reset_disable(RCU_SPI2RST);
+            break;
+        case SPI3:
+            /* reset SPI3 */
+            rcu_periph_reset_enable(RCU_SPI3RST);
+            rcu_periph_reset_disable(RCU_SPI3RST);
+            break;
+        case SPI4:
+            /* reset SPI4 */
+            rcu_periph_reset_enable(RCU_SPI4RST);
+            rcu_periph_reset_disable(RCU_SPI4RST);
+            break;
+        case SPI5:
+            /* reset SPI5 */
+            rcu_periph_reset_enable(RCU_SPI5RST);
+            rcu_periph_reset_disable(RCU_SPI5RST);
+            break;
+        default:
+            break;
     }
 }
 
@@ -97,13 +98,13 @@ void spi_i2s_deinit(uint32_t spi_periph)
 void spi_struct_para_init(spi_parameter_struct *spi_struct)
 {
     /* configure the structure with default value */
-    spi_struct->device_mode          = SPI_SLAVE;
-    spi_struct->trans_mode           = SPI_TRANSMODE_FULLDUPLEX;
-    spi_struct->frame_size           = SPI_FRAMESIZE_8BIT;
-    spi_struct->nss                  = SPI_NSS_HARD;
+    spi_struct->device_mode = SPI_SLAVE;
+    spi_struct->trans_mode = SPI_TRANSMODE_FULLDUPLEX;
+    spi_struct->frame_size = SPI_FRAMESIZE_8BIT;
+    spi_struct->nss = SPI_NSS_HARD;
     spi_struct->clock_polarity_phase = SPI_CK_PL_LOW_PH_1EDGE;
-    spi_struct->prescale             = SPI_PSC_2;
-    spi_struct->endian               = SPI_ENDIAN_MSB;
+    spi_struct->prescale = SPI_PSC_2;
+    spi_struct->endian = SPI_ENDIAN_MSB;
 }
 /*!
     \brief      initialize SPI parameter
@@ -278,22 +279,31 @@ void i2s_psc_config(uint32_t spi_periph, uint32_t i2s_audiosample, uint32_t i2s_
     /* get the RCU_PLLI2S_PLLI2SR value */
     plli2sr = (uint32_t)((RCU_PLLI2S & RCU_PLLI2S_PLLI2SR) >> 28);
 
-    if((RCU_PLL & RCU_PLL_PLLSEL) == RCU_PLLSRC_HXTAL) {
+    if ((RCU_PLL & RCU_PLL_PLLSEL) == RCU_PLLSRC_HXTAL)
+    {
         /* get the I2S source clock value */
         i2sclock = (uint32_t)(((HXTAL_VALUE / plli2sm) * plli2sn) / plli2sr);
-    } else {
+    }
+    else
+    {
         /* get the I2S source clock value */
         i2sclock = (uint32_t)(((IRC16M_VALUE / plli2sm) * plli2sn) / plli2sr);
     }
 #endif /* I2S_EXTERNAL_CLOCK_IN */
 
     /* config the prescaler depending on the mclk output state, the frame format and audio sample rate */
-    if(I2S_MCKOUT_ENABLE == i2s_mckout) {
+    if (I2S_MCKOUT_ENABLE == i2s_mckout)
+    {
         clks = (uint32_t)(((i2sclock / 256U) * 10U) / i2s_audiosample);
-    } else {
-        if(I2S_FRAMEFORMAT_DT16B_CH16B == i2s_frameformat) {
+    }
+    else
+    {
+        if (I2S_FRAMEFORMAT_DT16B_CH16B == i2s_frameformat)
+        {
             clks = (uint32_t)(((i2sclock / 32U) * 10U) / i2s_audiosample);
-        } else {
+        }
+        else
+        {
             clks = (uint32_t)(((i2sclock / 64U) * 10U) / i2s_audiosample);
         }
     }
@@ -304,7 +314,8 @@ void i2s_psc_config(uint32_t spi_periph, uint32_t i2s_audiosample, uint32_t i2s_
     i2sof = (i2sof << 8U);
 
     /* set the default values */
-    if((i2sdiv < 2U) || (i2sdiv > 255U)) {
+    if ((i2sdiv < 2U) || (i2sdiv > 255U))
+    {
         i2sdiv = 2U;
         i2sof = 0U;
     }
@@ -396,9 +407,12 @@ void spi_nss_internal_low(uint32_t spi_periph)
 */
 void spi_dma_enable(uint32_t spi_periph, uint8_t spi_dma)
 {
-    if(SPI_DMA_TRANSMIT == spi_dma) {
+    if (SPI_DMA_TRANSMIT == spi_dma)
+    {
         SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_DMATEN;
-    } else {
+    }
+    else
+    {
         SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_DMAREN;
     }
 }
@@ -415,9 +429,12 @@ void spi_dma_enable(uint32_t spi_periph, uint8_t spi_dma)
 */
 void spi_dma_disable(uint32_t spi_periph, uint8_t spi_dma)
 {
-    if(SPI_DMA_TRANSMIT == spi_dma) {
+    if (SPI_DMA_TRANSMIT == spi_dma)
+    {
         SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_DMATEN);
-    } else {
+    }
+    else
+    {
         SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_DMAREN);
     }
 }
@@ -474,10 +491,13 @@ uint16_t spi_i2s_data_receive(uint32_t spi_periph)
 */
 void spi_bidirectional_transfer_config(uint32_t spi_periph, uint32_t transfer_direction)
 {
-    if(SPI_BIDIRECTIONAL_TRANSMIT == transfer_direction) {
+    if (SPI_BIDIRECTIONAL_TRANSMIT == transfer_direction)
+    {
         /* set the transmit only mode */
         SPI_CTL0(spi_periph) |= (uint32_t)SPI_BIDIRECTIONAL_TRANSMIT;
-    } else {
+    }
+    else
+    {
         /* set the receive only mode */
         SPI_CTL0(spi_periph) &= SPI_BIDIRECTIONAL_RECEIVE;
     }
@@ -508,8 +528,8 @@ void spi_bidirectional_transfer_config(uint32_t spi_periph, uint32_t transfer_di
     \param[out] none
     \retval     none
 */
-void i2s_full_duplex_mode_config(uint32_t i2s_add_periph, uint32_t i2s_mode, uint32_t i2s_standard,
-                                 uint32_t i2s_ckpl, uint32_t i2s_frameformat)
+void i2s_full_duplex_mode_config(
+    uint32_t i2s_add_periph, uint32_t i2s_mode, uint32_t i2s_standard, uint32_t i2s_ckpl, uint32_t i2s_frameformat)
 {
     uint32_t reg = 0U, tmp = 0U;
 
@@ -517,9 +537,12 @@ void i2s_full_duplex_mode_config(uint32_t i2s_add_periph, uint32_t i2s_mode, uin
     reg &= I2S_FULL_DUPLEX_MASK;
 
     /* get the mode of the extra I2S module I2Sx_ADD */
-    if((I2S_MODE_MASTERTX == i2s_mode) || (I2S_MODE_SLAVETX == i2s_mode)) {
+    if ((I2S_MODE_MASTERTX == i2s_mode) || (I2S_MODE_SLAVETX == i2s_mode))
+    {
         tmp = I2S_MODE_SLAVERX;
-    } else {
+    }
+    else
+    {
         tmp = I2S_MODE_SLAVETX;
     }
 
@@ -621,9 +644,12 @@ void spi_crc_next(uint32_t spi_periph)
 */
 uint16_t spi_crc_get(uint32_t spi_periph, uint8_t spi_crc)
 {
-    if(SPI_CRC_TX == spi_crc) {
+    if (SPI_CRC_TX == spi_crc)
+    {
         return ((uint16_t)(SPI_TCRC(spi_periph)));
-    } else {
+    }
+    else
+    {
         return ((uint16_t)(SPI_RCRC(spi_periph)));
     }
 }
@@ -751,9 +777,12 @@ void spi_quad_io23_output_disable(uint32_t spi_periph)
 */
 FlagStatus spi_i2s_flag_get(uint32_t spi_periph, uint32_t flag)
 {
-    if(SPI_STAT(spi_periph) & flag) {
+    if (SPI_STAT(spi_periph) & flag)
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }
@@ -772,21 +801,22 @@ FlagStatus spi_i2s_flag_get(uint32_t spi_periph, uint32_t flag)
 */
 void spi_i2s_interrupt_enable(uint32_t spi_periph, uint8_t interrupt)
 {
-    switch(interrupt) {
-    /* SPI/I2S transmit buffer empty interrupt */
-    case SPI_I2S_INT_TBE:
-        SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_TBEIE;
-        break;
-    /* SPI/I2S receive buffer not empty interrupt */
-    case SPI_I2S_INT_RBNE:
-        SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_RBNEIE;
-        break;
-    /* SPI/I2S error */
-    case SPI_I2S_INT_ERR:
-        SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_ERRIE;
-        break;
-    default:
-        break;
+    switch (interrupt)
+    {
+        /* SPI/I2S transmit buffer empty interrupt */
+        case SPI_I2S_INT_TBE:
+            SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_TBEIE;
+            break;
+        /* SPI/I2S receive buffer not empty interrupt */
+        case SPI_I2S_INT_RBNE:
+            SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_RBNEIE;
+            break;
+        /* SPI/I2S error */
+        case SPI_I2S_INT_ERR:
+            SPI_CTL1(spi_periph) |= (uint32_t)SPI_CTL1_ERRIE;
+            break;
+        default:
+            break;
     }
 }
 
@@ -804,21 +834,22 @@ void spi_i2s_interrupt_enable(uint32_t spi_periph, uint8_t interrupt)
 */
 void spi_i2s_interrupt_disable(uint32_t spi_periph, uint8_t interrupt)
 {
-    switch(interrupt) {
-    /* SPI/I2S transmit buffer empty interrupt */
-    case SPI_I2S_INT_TBE :
-        SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_TBEIE);
-        break;
-    /* SPI/I2S receive buffer not empty interrupt */
-    case SPI_I2S_INT_RBNE :
-        SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_RBNEIE);
-        break;
-    /* SPI/I2S error */
-    case SPI_I2S_INT_ERR :
-        SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_ERRIE);
-        break;
-    default :
-        break;
+    switch (interrupt)
+    {
+        /* SPI/I2S transmit buffer empty interrupt */
+        case SPI_I2S_INT_TBE:
+            SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_TBEIE);
+            break;
+        /* SPI/I2S receive buffer not empty interrupt */
+        case SPI_I2S_INT_RBNE:
+            SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_RBNEIE);
+            break;
+        /* SPI/I2S error */
+        case SPI_I2S_INT_ERR:
+            SPI_CTL1(spi_periph) &= (uint32_t)(~SPI_CTL1_ERRIE);
+            break;
+        default:
+            break;
     }
 }
 
@@ -842,49 +873,53 @@ FlagStatus spi_i2s_interrupt_flag_get(uint32_t spi_periph, uint8_t interrupt)
     uint32_t reg1 = SPI_STAT(spi_periph);
     uint32_t reg2 = SPI_CTL1(spi_periph);
 
-    switch(interrupt) {
-    /* SPI/I2S transmit buffer empty interrupt */
-    case SPI_I2S_INT_FLAG_TBE :
-        reg1 = reg1 & SPI_STAT_TBE;
-        reg2 = reg2 & SPI_CTL1_TBEIE;
-        break;
-    /* SPI/I2S receive buffer not empty interrupt */
-    case SPI_I2S_INT_FLAG_RBNE :
-        reg1 = reg1 & SPI_STAT_RBNE;
-        reg2 = reg2 & SPI_CTL1_RBNEIE;
-        break;
-    /* SPI/I2S overrun interrupt */
-    case SPI_I2S_INT_FLAG_RXORERR :
-        reg1 = reg1 & SPI_STAT_RXORERR;
-        reg2 = reg2 & SPI_CTL1_ERRIE;
-        break;
-    /* SPI config error interrupt */
-    case SPI_INT_FLAG_CONFERR :
-        reg1 = reg1 & SPI_STAT_CONFERR;
-        reg2 = reg2 & SPI_CTL1_ERRIE;
-        break;
-    /* SPI CRC error interrupt */
-    case SPI_INT_FLAG_CRCERR :
-        reg1 = reg1 & SPI_STAT_CRCERR;
-        reg2 = reg2 & SPI_CTL1_ERRIE;
-        break;
-    /* I2S underrun error interrupt */
-    case I2S_INT_FLAG_TXURERR :
-        reg1 = reg1 & SPI_STAT_TXURERR;
-        reg2 = reg2 & SPI_CTL1_ERRIE;
-        break;
-    /* SPI/I2S format error interrupt */
-    case SPI_I2S_INT_FLAG_FERR :
-        reg1 = reg1 & SPI_STAT_FERR;
-        reg2 = reg2 & SPI_CTL1_ERRIE;
-        break;
-    default :
-        break;
+    switch (interrupt)
+    {
+        /* SPI/I2S transmit buffer empty interrupt */
+        case SPI_I2S_INT_FLAG_TBE:
+            reg1 = reg1 & SPI_STAT_TBE;
+            reg2 = reg2 & SPI_CTL1_TBEIE;
+            break;
+        /* SPI/I2S receive buffer not empty interrupt */
+        case SPI_I2S_INT_FLAG_RBNE:
+            reg1 = reg1 & SPI_STAT_RBNE;
+            reg2 = reg2 & SPI_CTL1_RBNEIE;
+            break;
+        /* SPI/I2S overrun interrupt */
+        case SPI_I2S_INT_FLAG_RXORERR:
+            reg1 = reg1 & SPI_STAT_RXORERR;
+            reg2 = reg2 & SPI_CTL1_ERRIE;
+            break;
+        /* SPI config error interrupt */
+        case SPI_INT_FLAG_CONFERR:
+            reg1 = reg1 & SPI_STAT_CONFERR;
+            reg2 = reg2 & SPI_CTL1_ERRIE;
+            break;
+        /* SPI CRC error interrupt */
+        case SPI_INT_FLAG_CRCERR:
+            reg1 = reg1 & SPI_STAT_CRCERR;
+            reg2 = reg2 & SPI_CTL1_ERRIE;
+            break;
+        /* I2S underrun error interrupt */
+        case I2S_INT_FLAG_TXURERR:
+            reg1 = reg1 & SPI_STAT_TXURERR;
+            reg2 = reg2 & SPI_CTL1_ERRIE;
+            break;
+        /* SPI/I2S format error interrupt */
+        case SPI_I2S_INT_FLAG_FERR:
+            reg1 = reg1 & SPI_STAT_FERR;
+            reg2 = reg2 & SPI_CTL1_ERRIE;
+            break;
+        default:
+            break;
     }
     /*get SPI/I2S interrupt flag status */
-    if(reg1 && reg2) {
+    if (reg1 && reg2)
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }

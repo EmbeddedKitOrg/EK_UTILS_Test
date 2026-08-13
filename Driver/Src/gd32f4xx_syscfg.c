@@ -118,33 +118,34 @@ void syscfg_exti_line_config(uint8_t exti_port, uint8_t exti_pin)
     uint32_t clear_exti_mask = ~((uint32_t)EXTI_SS_MASK << (EXTI_SS_MSTEP(exti_pin)));
     uint32_t config_exti_mask = ((uint32_t)exti_port) << (EXTI_SS_MSTEP(exti_pin));
 
-    switch(exti_pin / EXTI_SS_JSTEP) {
-    case EXTISS0:
-        /* clear EXTI source line(0..3) */
-        SYSCFG_EXTISS0 &= clear_exti_mask;
-        /* configure EXTI soure line(0..3) */
-        SYSCFG_EXTISS0 |= config_exti_mask;
-        break;
-    case EXTISS1:
-        /* clear EXTI soure line(4..7) */
-        SYSCFG_EXTISS1 &= clear_exti_mask;
-        /* configure EXTI soure line(4..7) */
-        SYSCFG_EXTISS1 |= config_exti_mask;
-        break;
-    case EXTISS2:
-        /* clear EXTI soure line(8..11) */
-        SYSCFG_EXTISS2 &= clear_exti_mask;
-        /* configure EXTI soure line(8..11) */
-        SYSCFG_EXTISS2 |= config_exti_mask;
-        break;
-    case EXTISS3:
-        /* clear EXTI soure line(12..15) */
-        SYSCFG_EXTISS3 &= clear_exti_mask;
-        /* configure EXTI soure line(12..15) */
-        SYSCFG_EXTISS3 |= config_exti_mask;
-        break;
-    default:
-        break;
+    switch (exti_pin / EXTI_SS_JSTEP)
+    {
+        case EXTISS0:
+            /* clear EXTI source line(0..3) */
+            SYSCFG_EXTISS0 &= clear_exti_mask;
+            /* configure EXTI soure line(0..3) */
+            SYSCFG_EXTISS0 |= config_exti_mask;
+            break;
+        case EXTISS1:
+            /* clear EXTI soure line(4..7) */
+            SYSCFG_EXTISS1 &= clear_exti_mask;
+            /* configure EXTI soure line(4..7) */
+            SYSCFG_EXTISS1 |= config_exti_mask;
+            break;
+        case EXTISS2:
+            /* clear EXTI soure line(8..11) */
+            SYSCFG_EXTISS2 &= clear_exti_mask;
+            /* configure EXTI soure line(8..11) */
+            SYSCFG_EXTISS2 |= config_exti_mask;
+            break;
+        case EXTISS3:
+            /* clear EXTI soure line(12..15) */
+            SYSCFG_EXTISS3 &= clear_exti_mask;
+            /* configure EXTI soure line(12..15) */
+            SYSCFG_EXTISS3 |= config_exti_mask;
+            break;
+        default:
+            break;
     }
 }
 
@@ -194,9 +195,12 @@ void syscfg_compensation_config(uint32_t syscfg_compensation)
   */
 FlagStatus syscfg_flag_get(void)
 {
-    if(((uint32_t)RESET) != (SYSCFG_CPSCTL & SYSCFG_CPSCTL_CPS_RDY)) {
+    if (((uint32_t)RESET) != (SYSCFG_CPSCTL & SYSCFG_CPSCTL_CPS_RDY))
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }

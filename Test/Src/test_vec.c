@@ -20,7 +20,7 @@ void vec_test(void)
 
     EK_LOG_INFO("walk vec");
     uint32_t i;
-    ek_vec_iterate(i, v)
+    ek_vec_foreach(i, v)
     {
         EK_LOG("vec[%d] = %f", i, v.items[i]);
     }
@@ -35,7 +35,7 @@ void vec_test(void)
     EK_LOG_INFO("vec remove index 2");
     ek_vec_remove(v, 2);
 
-    ek_vec_iterate(i, v)
+    ek_vec_foreach(i, v)
     {
         EK_LOG("vec[%d] = %f,cap = %u", i, v.items[i], v.cap);
     }
@@ -47,21 +47,21 @@ void vec_test(void)
         ek_vec_remove(v, 0);
     }
 
-    ek_vec_iterate(i, v)
+    ek_vec_foreach(i, v)
     {
         EK_LOG("vec[%d] = %f,cap = %u", i, v.items[i], v.cap);
     }
 
     EK_LOG_INFO("vec shrink");
     ek_vec_shrink(v);
-    ek_vec_iterate(i, v)
+    ek_vec_foreach(i, v)
     {
         EK_LOG("vec[%d] = %f,cap = %u", i, v.items[i], v.cap);
     }
 
     EK_LOG_INFO("vec clear");
     ek_vec_clear(v);
-    ek_vec_iterate(i, v)
+    ek_vec_foreach(i, v)
     {
         EK_LOG("vec[%d] = %f,cap = %u", i, v.items[i], v.cap);
     }
@@ -73,7 +73,7 @@ void vec_test(void)
         ek_vec_append(v, i * 5);
     }
 
-    ek_vec_iterate(i, v)
+    ek_vec_foreach(i, v)
     {
         EK_LOG("vec[%d] = %f,cap = %u", i, v.items[i], v.cap);
     }
@@ -82,7 +82,7 @@ void vec_test(void)
 
     ek_vec_remove_unorder(v, 2);
 
-    ek_vec_iterate(i, v)
+    ek_vec_foreach(i, v)
     {
         EK_LOG("vec[%d] = %f,cap = %u", i, v.items[i], v.cap);
     }

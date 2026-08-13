@@ -34,7 +34,7 @@ OF SUCH DAMAGE.
 
 #include "gd32f4xx_dbg.h"
 
-#define DBG_RESET_VAL       0x00000000U
+#define DBG_RESET_VAL 0x00000000U
 
 /*!
     \brief    deinitialize the DBG
@@ -177,4 +177,3 @@ void dbg_trace_pin_disable(void)
 {
     DBG_CTL0 &= ~DBG_CTL0_TRACE_IOEN;
 }
-

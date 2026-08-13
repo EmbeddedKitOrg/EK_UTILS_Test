@@ -34,13 +34,13 @@ OF SUCH DAMAGE.
 
 #include "gd32f4xx_ctc.h"
 
-#define CTC_FLAG_MASK            ((uint32_t)0x00000700U)
+#define CTC_FLAG_MASK ((uint32_t)0x00000700U)
 
 /* CTC register bit offset */
-#define CTC_TRIMVALUE_OFFSET     ((uint32_t)8U)
-#define CTC_TRIM_VALUE_OFFSET    ((uint32_t)8U)
-#define CTC_REFCAP_OFFSET        ((uint32_t)16U)
-#define CTC_LIMIT_VALUE_OFFSET   ((uint32_t)16U)
+#define CTC_TRIMVALUE_OFFSET   ((uint32_t)8U)
+#define CTC_TRIM_VALUE_OFFSET  ((uint32_t)8U)
+#define CTC_REFCAP_OFFSET      ((uint32_t)16U)
+#define CTC_LIMIT_VALUE_OFFSET ((uint32_t)16U)
 
 /*!
     \brief    reset CTC clock trim controller
@@ -218,9 +218,12 @@ uint16_t ctc_counter_capture_value_read(void)
 */
 FlagStatus ctc_counter_direction_read(void)
 {
-    if(RESET != (CTC_STAT & CTC_STAT_REFDIR)) {
+    if (RESET != (CTC_STAT & CTC_STAT_REFDIR))
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }
@@ -302,18 +305,24 @@ FlagStatus ctc_interrupt_flag_get(uint32_t int_flag)
     uint32_t interrupt_flag = 0U, intenable = 0U;
 
     /* check whether the interrupt is enabled */
-    if(RESET != (int_flag & CTC_FLAG_MASK)) {
+    if (RESET != (int_flag & CTC_FLAG_MASK))
+    {
         intenable = CTC_CTL0 & CTC_CTL0_ERRIE;
-    } else {
+    }
+    else
+    {
         intenable = CTC_CTL0 & int_flag;
     }
 
     /* get interrupt flag status */
     interrupt_flag = CTC_STAT & int_flag;
 
-    if(interrupt_flag && intenable) {
+    if (interrupt_flag && intenable)
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }
@@ -334,9 +343,12 @@ FlagStatus ctc_interrupt_flag_get(uint32_t int_flag)
 */
 void ctc_interrupt_flag_clear(uint32_t int_flag)
 {
-    if(RESET != (int_flag & CTC_FLAG_MASK)) {
+    if (RESET != (int_flag & CTC_FLAG_MASK))
+    {
         CTC_INTC |= CTC_INTC_ERRIC;
-    } else {
+    }
+    else
+    {
         CTC_INTC |= int_flag;
     }
 }
@@ -357,9 +369,12 @@ void ctc_interrupt_flag_clear(uint32_t int_flag)
 */
 FlagStatus ctc_flag_get(uint32_t flag)
 {
-    if(RESET != (CTC_STAT & flag)) {
+    if (RESET != (CTC_STAT & flag))
+    {
         return SET;
-    } else {
+    }
+    else
+    {
         return RESET;
     }
 }
@@ -380,9 +395,12 @@ FlagStatus ctc_flag_get(uint32_t flag)
 */
 void ctc_flag_clear(uint32_t flag)
 {
-    if(RESET != (flag & CTC_FLAG_MASK)) {
+    if (RESET != (flag & CTC_FLAG_MASK))
+    {
         CTC_INTC |= CTC_INTC_ERRIC;
-    } else {
+    }
+    else
+    {
         CTC_INTC |= flag;
     }
 }

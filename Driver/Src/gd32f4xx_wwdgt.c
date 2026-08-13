@@ -96,7 +96,8 @@ void wwdgt_config(uint16_t counter, uint16_t window, uint32_t prescaler)
 */
 FlagStatus wwdgt_flag_get(void)
 {
-    if(RESET != (WWDGT_STAT & WWDGT_STAT_EWIF)){
+    if (RESET != (WWDGT_STAT & WWDGT_STAT_EWIF))
+    {
         return SET;
     }
 

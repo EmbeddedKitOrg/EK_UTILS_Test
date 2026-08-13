@@ -34,8 +34,8 @@ OF SUCH DAMAGE.
 
 #include "gd32f4xx_crc.h"
 
-#define CRC_DATA_RESET_VALUE      ((uint32_t)0xFFFFFFFFU)
-#define CRC_FDATA_RESET_VALUE     ((uint32_t)0x00000000U)
+#define CRC_DATA_RESET_VALUE  ((uint32_t)0xFFFFFFFFU)
+#define CRC_FDATA_RESET_VALUE ((uint32_t)0x00000000U)
 
 /*!
     \brief      deinit CRC calculation unit
@@ -45,9 +45,9 @@ OF SUCH DAMAGE.
 */
 void crc_deinit(void)
 {
-    CRC_DATA  = CRC_DATA_RESET_VALUE;
+    CRC_DATA = CRC_DATA_RESET_VALUE;
     CRC_FDATA = CRC_FDATA_RESET_VALUE;
-    CRC_CTL   = (uint32_t)CRC_CTL_RST;
+    CRC_CTL = (uint32_t)CRC_CTL_RST;
 }
 
 /*!
@@ -120,7 +120,8 @@ uint32_t crc_single_data_calculate(uint32_t sdata)
 uint32_t crc_block_data_calculate(uint32_t array[], uint32_t size)
 {
     uint32_t index;
-    for(index = 0U; index < size; index++) {
+    for (index = 0U; index < size; index++)
+    {
         CRC_DATA = array[index];
     }
     return (CRC_DATA);

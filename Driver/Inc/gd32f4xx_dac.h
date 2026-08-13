@@ -277,4 +277,4 @@ FlagStatus dac_interrupt_flag_get(uint32_t dac_periph, uint32_t int_flag);
 /* clear DAC interrupt flag */
 void dac_interrupt_flag_clear(uint32_t dac_periph, uint32_t int_flag);
 
-#endif/* __GD32F4XX_DAC_H */
+#endif /* __GD32F4XX_DAC_H */

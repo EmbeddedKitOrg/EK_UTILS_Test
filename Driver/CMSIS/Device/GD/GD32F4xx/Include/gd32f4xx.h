@@ -55,37 +55,37 @@ extern "C"
 
 #if !defined(GD32F450) && !defined(GD32F405) && !defined(GD32F407) && !defined(GD32F470) && !defined(GD32F425) && \
     !defined(GD32F427)
-#error "Please select the target GD32F4xx device in gd32f4xx.h file"
+#    error "Please select the target GD32F4xx device in gd32f4xx.h file"
 #endif /* undefine GD32F4xx tip */
 
 /* define value of high speed crystal oscillator (HXTAL) in Hz */
 #if !defined(HXTAL_VALUE)
-#define HXTAL_VALUE ((uint32_t)25000000)
+#    define HXTAL_VALUE ((uint32_t)25000000)
 #endif /* high speed crystal oscillator value */
 
 /* define startup timeout value of high speed crystal oscillator (HXTAL) */
 #if !defined(HXTAL_STARTUP_TIMEOUT)
-#define HXTAL_STARTUP_TIMEOUT ((uint16_t)0xFFFF)
+#    define HXTAL_STARTUP_TIMEOUT ((uint16_t)0xFFFF)
 #endif /* high speed crystal oscillator startup timeout */
 
 /* define value of internal 16MHz RC oscillator (IRC16M) in Hz */
 #if !defined(IRC16M_VALUE)
-#define IRC16M_VALUE ((uint32_t)16000000)
+#    define IRC16M_VALUE ((uint32_t)16000000)
 #endif /* internal 16MHz RC oscillator value */
 
 /* define startup timeout value of internal 16MHz RC oscillator (IRC16M) */
 #if !defined(IRC16M_STARTUP_TIMEOUT)
-#define IRC16M_STARTUP_TIMEOUT ((uint16_t)0x0500)
+#    define IRC16M_STARTUP_TIMEOUT ((uint16_t)0x0500)
 #endif /* internal 16MHz RC oscillator startup timeout */
 
 /* define value of internal 32KHz RC oscillator(IRC32K) in Hz */
 #if !defined(IRC32K_VALUE)
-#define IRC32K_VALUE ((uint32_t)32000)
+#    define IRC32K_VALUE ((uint32_t)32000)
 #endif /* internal 32KHz RC oscillator value */
 
 /* define value of low speed crystal oscillator (LXTAL)in Hz */
 #if !defined(LXTAL_VALUE)
-#define LXTAL_VALUE ((uint32_t)32768)
+#    define LXTAL_VALUE ((uint32_t)32768)
 #endif /* low speed crystal oscillator value */
 
 /* I2S external clock in selection */
@@ -371,10 +371,10 @@ typedef enum
 
 /* define marco USE_STDPERIPH_DRIVER */
 #if !defined USE_STDPERIPH_DRIVER
-#define USE_STDPERIPH_DRIVER
+#    define USE_STDPERIPH_DRIVER
 #endif
 #ifdef USE_STDPERIPH_DRIVER
-#include "gd32f4xx_libopt.h"
+#    include "gd32f4xx_libopt.h"
 #endif /* USE_STDPERIPH_DRIVER */
 
 #ifdef __cplusplus
