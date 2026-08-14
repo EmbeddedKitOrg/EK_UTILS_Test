@@ -7,6 +7,32 @@
 #include "ek_heap.h"
 #include "ek_export.h"
 
+
+#define TEST_FAIL(msg)              \
+    do                              \
+    {                               \
+        EK_LOG_ERROR("%s", (msg));  \
+        exit(1);                    \
+    } while (0)
+
+#define TEST_ASSERT(cond, msg)      \
+    do                              \
+    {                               \
+        if (!(cond))                \
+        {                           \
+            TEST_FAIL(msg);         \
+        }                           \
+    } while (0)
+
+#define TEST_ASSERT_EQ(a, b, msg)   \
+    do                              \
+    {                               \
+        if ((a) != (b))             \
+        {                           \
+            TEST_FAIL(msg);         \
+        }                           \
+    } while (0)
+
 #define PI (3.1415926f)
 
 typedef struct
@@ -20,6 +46,6 @@ void ringbuf_test(void);
 void stack_test(void);
 void str_test(void);
 void vec_test(void);
-void static_alloc_test(void);
+void evoke_test(void);
 
 #endif // TEST_H

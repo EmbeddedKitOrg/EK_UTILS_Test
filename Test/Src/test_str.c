@@ -1,67 +1,53 @@
 #include "test.h"
 #include "ek_str.h"
+#include <string.h>
 
 EK_LOG_FILE_TAG("test_str.c");
 
 void str_test(void)
 {
     EK_LOG_INFO("str test start");
+    const size_t unused_start = ek_heap_unused();
 
-    EK_LOG_INFO("make an empty str");
     ek_str_t *s = ek_str_create(NULL);
-    EK_LOG_INFO("s:%s", ek_str_get_cstring(s));
-    EK_LOG_INFO("before free:%zu used:%zu", ek_heap_unused(), ek_heap_used());
+    TEST_ASSERT(s != NULL, "create empty str failed");
+    TEST_ASSERT(strcmp(ek_str_get_cstring(s), "") == 0, "empty str content mismatch");
+    TEST_ASSERT_EQ(ek_str_get_len(s), 0U, "empty str len mismatch");
     ek_str_free(s);
-    EK_LOG_INFO("after free:%zu, used:%zu", ek_heap_unused(), ek_heap_used());
 
     const char *i_am_a_string = "i am a string";
-    EK_LOG_INFO("make a str:%s", i_am_a_string);
     s = ek_str_create(i_am_a_string);
-    EK_LOG_INFO("s:%s", ek_str_get_cstring(s));
-    EK_LOG_INFO("before free:%zu used:%zu", ek_heap_unused(), ek_heap_used());
+    TEST_ASSERT(s != NULL, "create str failed");
+    TEST_ASSERT(strcmp(ek_str_get_cstring(s), i_am_a_string) == 0, "init str content mismatch");
     ek_str_free(s);
-    EK_LOG_INFO("after free:%zu, used:%zu", ek_heap_unused(), ek_heap_used());
 
-    const char *hello = "hello";
-    EK_LOG_INFO("make a str:%s", hello);
-    s = ek_str_create(hello);
-    EK_LOG_INFO("s:%s", ek_str_get_cstring(s));
-    EK_LOG_INFO("str append");
-    ek_str_append(s, " world!");
-    EK_LOG_INFO("s:%s", ek_str_get_cstring(s));
+    s = ek_str_create("hello");
+    TEST_ASSERT(s != NULL, "create hello str failed");
+    TEST_ASSERT(ek_str_append(s, " world!") == EK_ERR_NONE, "str append failed");
+    TEST_ASSERT(strcmp(ek_str_get_cstring(s), "hello world!") == 0, "append content mismatch");
 
-    const char *embeddekit = "EmbeddedKit";
-    EK_LOG_INFO("before append:%s", ek_str_get_cstring(s));
-    EK_LOG_INFO("append:%s", embeddekit);
-    ek_str_append_fmt(s, "%s", embeddekit);
-    EK_LOG_INFO("after append:%s", ek_str_get_cstring(s));
+    TEST_ASSERT(ek_str_append_fmt(s, "%s", "EmbeddedKit") == EK_ERR_NONE, "str append_fmt failed");
+    TEST_ASSERT(strcmp(ek_str_get_cstring(s), "hello world!EmbeddedKit") == 0, "append_fmt content mismatch");
 
-    EK_LOG_INFO("slice \"%s\",at [12:%u] ", ek_str_get_cstring(s), ek_str_get_len(s));
-    ek_str_t *slice = ek_str_slice(s, 12, ek_str_get_len(s));
-    EK_LOG_INFO("slice:%s", ek_str_get_cstring(slice));
+    ek_str_t *slice = ek_str_slice(s, 12, (int32_t)ek_str_get_len(s));
+    TEST_ASSERT(slice != NULL, "str slice failed");
+    TEST_ASSERT(strcmp(ek_str_get_cstring(slice), "EmbeddedKit") == 0, "slice content mismatch");
     ek_str_free(slice);
 
-    const char *n1netynine99 = " N1netyNine99";
-    EK_LOG_INFO("cat test");
-    EK_LOG_INFO("make a new string:%s", n1netynine99);
-    ek_str_t *s1 = ek_str_create(n1netynine99);
-    EK_LOG_INFO("string:%s", ek_str_get_cstring(s));
-    EK_LOG_INFO("cat start");
-    ek_str_cat(s, s1);
-    EK_LOG_INFO("cat result:%s", ek_str_get_cstring(s));
+    ek_str_t *s1 = ek_str_create(" N1netyNine99");
+    TEST_ASSERT(s1 != NULL, "create cat src failed");
+    TEST_ASSERT(ek_str_cat(s, s1) == EK_ERR_NONE, "str cat failed");
+    TEST_ASSERT(strcmp(ek_str_get_cstring(s), "hello world!EmbeddedKit N1netyNine99") == 0, "cat content mismatch");
 
-    const char *abcdefg = "abcdefg";
-    EK_LOG_INFO("reverse test");
-    EK_LOG_INFO("make a new string:%s", abcdefg);
-    ek_str_t *s2 = ek_str_create(abcdefg);
-    EK_LOG_INFO("string:%s", ek_str_get_cstring(s2));
-    EK_LOG_INFO("reverse start");
-    ek_str_reverse(s2);
-    EK_LOG_INFO("reverse result:%s", ek_str_get_cstring(s2));
+    ek_str_t *s2 = ek_str_create("abcdefg");
+    TEST_ASSERT(s2 != NULL, "create reverse str failed");
+    TEST_ASSERT(ek_str_reverse(s2) == EK_ERR_NONE, "str reverse failed");
+    TEST_ASSERT(strcmp(ek_str_get_cstring(s2), "gfedcba") == 0, "reverse content mismatch");
 
     ek_str_free(s);
     ek_str_free(s1);
     ek_str_free(s2);
-    EK_LOG_INFO("string finished,unused heap:%zu", ek_heap_unused());
-    EK_LOG_INFO("string finished,used heap:%zu", ek_heap_used());
+
+    TEST_ASSERT_EQ(ek_heap_unused(), unused_start, "str test leaked heap");
+    EK_LOG_INFO("str test passed, unused heap:%u", (unsigned)ek_heap_unused());
 }

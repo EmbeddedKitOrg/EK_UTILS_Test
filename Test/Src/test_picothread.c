@@ -40,6 +40,17 @@ static ek_pt_msg_handle_t s_test_msg;
 
 #endif /* EKCFG_PICOTHREAD_MSG */
 
+static void _static_pt_cb(ek_pt_handle_t pt, void *arg)
+{
+    __EK_UNUSED(arg);
+    EK_PT_BEGIN(pt);
+    EK_PT_END(pt);
+}
+
+EK_DEFINE_PT_SEM(static_sem, 1);
+EK_DEFINE_PT_MSG(static_msg, int, 3);
+EK_DEFINE_PT(static_pt, _static_pt_cb, 10, NULL);
+
 // 测试控制器：运行指定时长后挂起所有任务并输出结果汇总
 static void _test_controller(ek_pt_handle_t pt, void *arg)
 {
@@ -63,36 +74,67 @@ static void _test_controller(ek_pt_handle_t pt, void *arg)
     EK_LOG_INFO("====== picothread test result ======");
 #if EKCFG_PICOTHREAD_SEM == 1
     EK_LOG_INFO("[sem] acquire=%u, timeout=%u", s_sem_ok, s_sem_timeout_cnt);
+    TEST_ASSERT(s_sem_ok > 0U, "picothread sem acquire never happened");
+    TEST_ASSERT(s_sem_timeout_cnt > 0U, "picothread sem timeout never happened");
 #endif
 #if EKCFG_PICOTHREAD_MSG == 1
     EK_LOG_INFO("[msg] send=%u, recv=%u", s_msg_send_ok, s_msg_recv_ok);
+    TEST_ASSERT(s_msg_send_ok > 0U, "picothread msg send never happened");
+    TEST_ASSERT(s_msg_recv_ok > 0U, "picothread msg recv never happened");
+    TEST_ASSERT(s_msg_send_ok >= s_msg_recv_ok, "picothread msg recv exceeds send");
+    TEST_ASSERT((s_msg_send_ok - s_msg_recv_ok) <= 3U, "picothread msg backlog exceeds capacity");
 #endif
-    EK_LOG_INFO("====== test complete ======");
+    EK_LOG_INFO("====== picothread test passed ======");
 
+    // 测试只跑一轮：挂起自身，避免 EK_PT_END 后重新入队
+    EK_PT_SUSPEND(NULL);
     EK_PT_END(pt);
+
 }
 
 void picothread_test_init(void)
 {
+    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_ERR_NONE, "static alloc init failed");
+    TEST_ASSERT(static_msg.rb.buffer == (uint8_t *)static_msg_storage, "static msg storage mismatch");
+    TEST_ASSERT_EQ(static_msg.rb.cap, 3U, "static msg cap mismatch");
+    TEST_ASSERT(static_pt.cb == _static_pt_cb, "static pt cb mismatch");
+    TEST_ASSERT_EQ(static_pt.prio, 10U, "static pt prio mismatch");
+    TEST_ASSERT_EQ(static_sem.count, 1U, "static sem count mismatch");
+
+    const size_t unused_before = ek_heap_unused();
+    TEST_ASSERT_EQ(ek_heap_unused(), unused_before, "static picothread used heap");
+
+    ek_pt_deinit_static(&static_pt);
+    EK_LOG_INFO("static picothread objects initialized");
+
+
 #if EKCFG_PICOTHREAD_SEM == 1
     s_test_sem = ek_pt_sem_create(1);
+    TEST_ASSERT(s_test_sem != NULL, "create test sem failed");
     s_semA = ek_pt_create(_sem_taskA, 10, NULL);
     s_semB = ek_pt_create(_sem_taskB, 10, NULL);
     s_sem_to = ek_pt_create(_sem_timeout_demo, 10, NULL);
+    TEST_ASSERT(s_semA != NULL && s_semB != NULL && s_sem_to != NULL, "create sem tasks failed");
     EK_LOG_INFO("[sem] created: count=1, tasks=A/B/timeout");
+
 #endif
 
 #if EKCFG_PICOTHREAD_MSG == 1
     s_test_msg = ek_pt_msg_create(sizeof(int), 3);
+    TEST_ASSERT(s_test_msg != NULL, "create test msg failed");
     s_sender = ek_pt_create(_msg_sender, 10, NULL);
     s_receiver = ek_pt_create(_msg_receiver, 10, NULL);
     s_sender_fast = ek_pt_create(_msg_sender_fast, 10, NULL);
+    TEST_ASSERT(s_sender != NULL && s_receiver != NULL && s_sender_fast != NULL, "create msg tasks failed");
     EK_LOG_INFO("[msg] created: item_size=%u, capacity=3, tasks=send/recv/fast", (unsigned)sizeof(int));
+
 #endif
 
     // 控制器优先级最高，确保能及时挂起测试任务
     s_controller = ek_pt_create(_test_controller, 5, NULL);
+    TEST_ASSERT(s_controller != NULL, "create controller failed");
     EK_LOG_INFO("picothread test init done");
+
 }
 
 /* ========================================================================
