@@ -37,6 +37,7 @@
 #define EKCFG_RINGBUF        (1)
 #define EKCFG_RINGBUF_SPSC   (1)
 #define EKCFG_STACK          (1)
+#define EKCFG_SNAPSHOT       (1)
 #define EKCFG_EVOKE          (1)
 #define EKCFG_PICOTHREAD     (1)
 #define EKCFG_PICOTHREAD_SEM (1)
