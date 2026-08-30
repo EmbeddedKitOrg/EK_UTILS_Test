@@ -41,8 +41,10 @@ void ringbuf_test(void)
     EK_LOG_INFO("static ringbuf test passed");
 
     EK_LOG_INFO("start creating a rb");
+    const size_t unused_before_dyn = ek_heap_unused();
     ek_ringbuf_t *rb = ek_ringbuf_create(sizeof(student_t), 5);
     TEST_ASSERT(rb != NULL, "creating rb fail");
+    TEST_ASSERT(rb->buffer == rb->data, "dynamic ringbuf buffer not inline");
     EK_LOG_INFO("create successfully");
 
     student_t items[5];
@@ -79,5 +81,6 @@ void ringbuf_test(void)
     TEST_ASSERT(ek_ringbuf_read(rb, &empty_item) == EK_ERR_EMPTY, "ringbuf should be empty");
 
     ek_ringbuf_destroy(rb);
+    TEST_ASSERT_EQ(ek_heap_unused(), unused_before_dyn, "ringbuf destroy leaked memory");
     EK_LOG_INFO("ringbuf test passed, unused heap:%u", (unsigned)ek_heap_unused());
 }

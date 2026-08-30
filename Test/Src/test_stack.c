@@ -32,8 +32,10 @@ void stack_test(void)
     EK_LOG_INFO("static stack test passed");
 
     EK_LOG_INFO("start creating a stack");
+    const size_t unused_before_dyn = ek_heap_unused();
     ek_stack_t *stack = ek_stack_create(sizeof(student_t), 5);
     TEST_ASSERT(stack != NULL, "creating stack fail");
+    TEST_ASSERT(stack->buffer == stack->data, "dynamic stack buffer not inline");
     EK_LOG_INFO("create successfully");
 
     student_t items[5];
@@ -60,5 +62,6 @@ void stack_test(void)
     TEST_ASSERT(ek_stack_pop(stack, &empty_item) == EK_ERR_EMPTY, "stack should be empty");
 
     ek_stack_destroy(stack);
+    TEST_ASSERT_EQ(ek_heap_unused(), unused_before_dyn, "stack destroy leaked memory");
     EK_LOG_INFO("stack test passed, unused heap:%u", (unsigned)ek_heap_unused());
 }

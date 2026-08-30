@@ -122,6 +122,7 @@ void picothread_test_init(void)
 #if EKCFG_PICOTHREAD_MSG == 1
     s_test_msg = ek_pt_msg_create(sizeof(int), 3);
     TEST_ASSERT(s_test_msg != NULL, "create test msg failed");
+    TEST_ASSERT(s_test_msg->rb.buffer == s_test_msg->data, "dynamic msg buffer not inline");
     s_sender = ek_pt_create(_msg_sender, 10, NULL);
     s_receiver = ek_pt_create(_msg_receiver, 10, NULL);
     s_sender_fast = ek_pt_create(_msg_sender_fast, 10, NULL);
