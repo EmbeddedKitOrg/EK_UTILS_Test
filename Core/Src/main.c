@@ -24,6 +24,7 @@ int main(void)
     picothread_test_init();
     ringbuf_test();
     stack_test();
+    snapshot_test();
     str_test();
     vec_test();
 

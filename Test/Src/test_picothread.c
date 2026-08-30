@@ -89,14 +89,14 @@ static void _test_controller(ek_pt_handle_t pt, void *arg)
     // 测试只跑一轮：挂起自身，避免 EK_PT_END 后重新入队
     EK_PT_SUSPEND(NULL);
     EK_PT_END(pt);
-
 }
 
 void picothread_test_init(void)
 {
     TEST_ASSERT(ek_static_alloc_get_init_error() == EK_ERR_NONE, "static alloc init failed");
-    TEST_ASSERT(static_msg.rb.buffer == (uint8_t *)static_msg_storage, "static msg storage mismatch");
-    TEST_ASSERT_EQ(static_msg.rb.cap, 3U, "static msg cap mismatch");
+    TEST_ASSERT((uint8_t *)static_msg->rb.data == (uint8_t *)static_msg + sizeof(*static_msg),
+                "static msg data not inline");
+    TEST_ASSERT_EQ(static_msg->rb.cap, 3U, "static msg cap mismatch");
     TEST_ASSERT(static_pt.cb == _static_pt_cb, "static pt cb mismatch");
     TEST_ASSERT_EQ(static_pt.prio, 10U, "static pt prio mismatch");
     TEST_ASSERT_EQ(static_sem.count, 1U, "static sem count mismatch");
@@ -106,7 +106,6 @@ void picothread_test_init(void)
 
     ek_pt_deinit_static(&static_pt);
     EK_LOG_INFO("static picothread objects initialized");
-
 
 #if EKCFG_PICOTHREAD_SEM == 1
     s_test_sem = ek_pt_sem_create(1);
@@ -122,7 +121,8 @@ void picothread_test_init(void)
 #if EKCFG_PICOTHREAD_MSG == 1
     s_test_msg = ek_pt_msg_create(sizeof(int), 3);
     TEST_ASSERT(s_test_msg != NULL, "create test msg failed");
-    TEST_ASSERT(s_test_msg->rb.buffer == s_test_msg->data, "dynamic msg buffer not inline");
+    TEST_ASSERT((uint8_t *)s_test_msg->rb.data == (uint8_t *)s_test_msg + sizeof(*s_test_msg),
+                "dynamic msg data not inline");
     s_sender = ek_pt_create(_msg_sender, 10, NULL);
     s_receiver = ek_pt_create(_msg_receiver, 10, NULL);
     s_sender_fast = ek_pt_create(_msg_sender_fast, 10, NULL);
@@ -135,7 +135,6 @@ void picothread_test_init(void)
     s_controller = ek_pt_create(_test_controller, 5, NULL);
     TEST_ASSERT(s_controller != NULL, "create controller failed");
     EK_LOG_INFO("picothread test init done");
-
 }
 
 /* ========================================================================
