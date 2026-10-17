@@ -12,35 +12,35 @@ static unsigned s_sem_timeout_cnt;
 static unsigned s_msg_send_ok;
 static unsigned s_msg_recv_ok;
 
-static ek_pt_handle_t s_controller;
+static ek_pt_t *s_controller;
 
 #if EKCFG_PICOTHREAD_SEM == 1
 
-static void _sem_taskA(ek_pt_handle_t pt, void *arg);
-static void _sem_taskB(ek_pt_handle_t pt, void *arg);
-static void _sem_timeout_demo(ek_pt_handle_t pt, void *arg);
+static void _sem_taskA(ek_pt_t *pt, void *arg);
+static void _sem_taskB(ek_pt_t *pt, void *arg);
+static void _sem_timeout_demo(ek_pt_t *pt, void *arg);
 
-static ek_pt_handle_t s_semA;
-static ek_pt_handle_t s_semB;
-static ek_pt_handle_t s_sem_to;
-static ek_pt_sem_handle_t s_test_sem;
+static ek_pt_t *s_semA;
+static ek_pt_t *s_semB;
+static ek_pt_t *s_sem_to;
+static ek_pt_sem_t *s_test_sem;
 
 #endif /* EKCFG_PICOTHREAD_SEM */
 
 #if EKCFG_PICOTHREAD_MSG == 1
 
-static void _msg_sender(ek_pt_handle_t pt, void *arg);
-static void _msg_receiver(ek_pt_handle_t pt, void *arg);
-static void _msg_sender_fast(ek_pt_handle_t pt, void *arg);
+static void _msg_sender(ek_pt_t *pt, void *arg);
+static void _msg_receiver(ek_pt_t *pt, void *arg);
+static void _msg_sender_fast(ek_pt_t *pt, void *arg);
 
-static ek_pt_handle_t s_sender;
-static ek_pt_handle_t s_receiver;
-static ek_pt_handle_t s_sender_fast;
-static ek_pt_msg_handle_t s_test_msg;
+static ek_pt_t *s_sender;
+static ek_pt_t *s_receiver;
+static ek_pt_t *s_sender_fast;
+static ek_pt_msg_t *s_test_msg;
 
 #endif /* EKCFG_PICOTHREAD_MSG */
 
-static void _static_pt_cb(ek_pt_handle_t pt, void *arg)
+static void _static_pt_cb(ek_pt_t *pt, void *arg)
 {
     __EK_UNUSED(arg);
     EK_PT_BEGIN(pt);
@@ -52,7 +52,7 @@ EK_DEFINE_PT_MSG(static_msg, int, 3);
 EK_DEFINE_PT(static_pt, _static_pt_cb, 10, NULL);
 
 // 测试控制器：运行指定时长后挂起所有任务并输出结果汇总
-static void _test_controller(ek_pt_handle_t pt, void *arg)
+static void _test_controller(ek_pt_t *pt, void *arg)
 {
     (void)arg;
     EK_PT_BEGIN(pt);
@@ -93,7 +93,7 @@ static void _test_controller(ek_pt_handle_t pt, void *arg)
 
 void picothread_test_init(void)
 {
-    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_ERR_NONE, "static alloc init failed");
+    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_OK, "static alloc init failed");
     TEST_ASSERT((uint8_t *)static_msg->rb.data == (uint8_t *)static_msg + sizeof(*static_msg),
                 "static msg data not inline");
     TEST_ASSERT_EQ(static_msg->rb.cap, 3U, "static msg cap mismatch");
@@ -106,6 +106,19 @@ void picothread_test_init(void)
 
     ek_pt_deinit_static(&static_pt);
     EK_LOG_INFO("static picothread objects initialized");
+
+    // 参数检查：非法参数返回错误码而非断言
+    TEST_ASSERT(ek_pt_create(NULL, 0, NULL) == NULL, "create with null cb should fail");
+    TEST_ASSERT(ek_pt_create(_static_pt_cb, (uint8_t)(EKCFG_PT_PRIO_LOWEST + 1U), NULL) == NULL,
+                "create with out-of-range prio should fail");
+    ek_pt_destroy(NULL);
+#if EKCFG_PICOTHREAD_SEM == 1
+    TEST_ASSERT(ek_pt_sem_take(NULL) == false, "sem take with null should fail");
+    ek_pt_sem_destroy(NULL);
+#endif
+#if EKCFG_PICOTHREAD_MSG == 1
+    ek_pt_msg_destroy(NULL);
+#endif
 
 #if EKCFG_PICOTHREAD_SEM == 1
     s_test_sem = ek_pt_sem_create(1);
@@ -148,7 +161,7 @@ void picothread_test_init(void)
 #if EKCFG_PICOTHREAD_SEM == 1
 
 // 二元信号量竞争任务 A：获取→持有→释放→延迟，与 B 交替执行
-static void _sem_taskA(ek_pt_handle_t pt, void *arg)
+static void _sem_taskA(ek_pt_t *pt, void *arg)
 {
     (void)arg;
     static unsigned iter = 0;
@@ -171,7 +184,7 @@ static void _sem_taskA(ek_pt_handle_t pt, void *arg)
 }
 
 // 二元信号量竞争任务 B：与 A 相同逻辑，验证互斥轮转
-static void _sem_taskB(ek_pt_handle_t pt, void *arg)
+static void _sem_taskB(ek_pt_t *pt, void *arg)
 {
     (void)arg;
     static unsigned iter = 0;
@@ -194,7 +207,7 @@ static void _sem_taskB(ek_pt_handle_t pt, void *arg)
 }
 
 // 信号量超时演示：500 tick 内尝试获取，超时则上报统计
-static void _sem_timeout_demo(ek_pt_handle_t pt, void *arg)
+static void _sem_timeout_demo(ek_pt_t *pt, void *arg)
 {
     (void)arg;
     static unsigned iter = 0;
@@ -238,7 +251,7 @@ static void _sem_timeout_demo(ek_pt_handle_t pt, void *arg)
 #if EKCFG_PICOTHREAD_MSG == 1
 
 // 定时发送者：每 500 tick 发送一条递增消息
-static void _msg_sender(ek_pt_handle_t pt, void *arg)
+static void _msg_sender(ek_pt_t *pt, void *arg)
 {
     (void)arg;
     static int counter = 0;
@@ -259,7 +272,7 @@ static void _msg_sender(ek_pt_handle_t pt, void *arg)
 }
 
 // 持续接收者：接收并打印消息内容
-static void _msg_receiver(ek_pt_handle_t pt, void *arg)
+static void _msg_receiver(ek_pt_t *pt, void *arg)
 {
     (void)arg;
     int data;
@@ -279,7 +292,7 @@ static void _msg_receiver(ek_pt_handle_t pt, void *arg)
 }
 
 // 快速发送者：无延迟连续发送，验证队列满时发送阻塞与唤醒
-static void _msg_sender_fast(ek_pt_handle_t pt, void *arg)
+static void _msg_sender_fast(ek_pt_t *pt, void *arg)
 {
     (void)arg;
     static int fast_counter = 100;

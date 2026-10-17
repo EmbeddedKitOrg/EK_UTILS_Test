@@ -7,7 +7,7 @@ EK_SNAPSHOT_DEFINE(static_snapshot, 16);
 
 void snapshot_test(void)
 {
-    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_ERR_NONE, "static alloc init failed");
+    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_OK, "static alloc init failed");
     TEST_ASSERT((uint8_t *)static_snapshot->data == (uint8_t *)static_snapshot + sizeof(*static_snapshot),
                 "static snapshot data not inline");
     TEST_ASSERT_EQ(static_snapshot->data_size, 16U, "static snapshot size mismatch");
@@ -20,8 +20,8 @@ void snapshot_test(void)
     TEST_ASSERT(ek_snapshot_get(static_snapshot, &rx) == EK_ERR_NODATA, "static snapshot should be empty");
 
     student_t tx = { .name = 7, .score = 7.7f };
-    TEST_ASSERT(ek_snapshot_set(static_snapshot, &tx, 100U) == EK_ERR_NONE, "static snapshot set failed");
-    TEST_ASSERT(ek_snapshot_get(static_snapshot, &rx) == EK_ERR_NONE, "static snapshot get failed");
+    TEST_ASSERT(ek_snapshot_set(static_snapshot, &tx, 100U) == EK_OK, "static snapshot set failed");
+    TEST_ASSERT(ek_snapshot_get(static_snapshot, &rx) == EK_OK, "static snapshot get failed");
     TEST_ASSERT(rx.name == tx.name && rx.score == tx.score, "static snapshot data mismatch");
     TEST_ASSERT_EQ(ek_snapshot_get_unique(static_snapshot), 100U, "static snapshot unique mismatch");
 
@@ -41,18 +41,26 @@ void snapshot_test(void)
 
     tx.name = 8;
     tx.score = 8.8f;
-    TEST_ASSERT(ek_snapshot_set(snap, &tx, 200U) == EK_ERR_NONE, "dynamic snapshot set failed");
-    TEST_ASSERT(ek_snapshot_get(snap, &rx) == EK_ERR_NONE, "dynamic snapshot get failed");
+    TEST_ASSERT(ek_snapshot_set(snap, &tx, 200U) == EK_OK, "dynamic snapshot set failed");
+    TEST_ASSERT(ek_snapshot_get(snap, &rx) == EK_OK, "dynamic snapshot get failed");
     TEST_ASSERT(rx.name == tx.name && rx.score == tx.score, "dynamic snapshot data mismatch");
 
     // 以新 id 覆盖更新
     tx.name = 9;
-    TEST_ASSERT(ek_snapshot_set(snap, &tx, 201U) == EK_ERR_NONE, "snapshot update failed");
-    TEST_ASSERT(ek_snapshot_get(snap, &rx) == EK_ERR_NONE, "snapshot re-get failed");
+    TEST_ASSERT(ek_snapshot_set(snap, &tx, 201U) == EK_OK, "snapshot update failed");
+    TEST_ASSERT(ek_snapshot_get(snap, &rx) == EK_OK, "snapshot re-get failed");
     TEST_ASSERT_EQ(rx.name, 9, "snapshot update data mismatch");
     TEST_ASSERT_EQ(ek_snapshot_get_unique(snap), 201U, "snapshot update unique mismatch");
 
     ek_snapshot_destroy(snap);
     TEST_ASSERT_EQ(ek_heap_unused(), unused_before_dyn, "snapshot destroy leaked memory");
+
+    // 参数检查：非法参数返回错误码而非断言
+    TEST_ASSERT(ek_snapshot_create(0) == NULL, "create with zero size should fail");
+    TEST_ASSERT(ek_snapshot_set(NULL, &tx, 1U) == EK_ERR_INVAL, "set on null snapshot should fail");
+    TEST_ASSERT(ek_snapshot_get(NULL, &rx) == EK_ERR_INVAL, "get from null snapshot should fail");
+    TEST_ASSERT_EQ(ek_snapshot_get_unique(NULL), 0U, "null snapshot unique should be 0");
+    ek_snapshot_destroy(NULL);
+
     EK_LOG_INFO("snapshot test passed, unused heap:%u", (unsigned)ek_heap_unused());
 }

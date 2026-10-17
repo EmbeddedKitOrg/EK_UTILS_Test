@@ -16,12 +16,20 @@ void evoke_test(void)
 {
     EK_LOG_INFO("evoke static test start");
 
-    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_ERR_NONE, "static alloc init failed");
+    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_OK, "static alloc init failed");
     TEST_ASSERT_EQ(static_event.count, 0U, "static event count mismatch");
     TEST_ASSERT(static_evoke_task.cb == _static_evoke_cb, "static evoke task cb mismatch");
 
     const size_t unused_before = ek_heap_unused();
     TEST_ASSERT_EQ(ek_heap_unused(), unused_before, "static evoke used heap");
+
+    // 参数检查：非法参数返回错误码而非断言
+    TEST_ASSERT(ek_evoke_task_create(NULL, NULL) == NULL, "create with null cb should fail");
+    TEST_ASSERT(ek_evoke_event_subscribe(NULL, &static_event) == false, "subscribe with null task should fail");
+    TEST_ASSERT(ek_evoke_event_broadcast_from_isr(NULL, NULL) == EK_ERR_INVAL,
+                "isr broadcast with null event should fail");
+    ek_evoke_task_destroy(NULL);
+    ek_evoke_event_destroy(NULL);
 
     EK_LOG_INFO("static evoke test passed, unused heap:%u", (unsigned)ek_heap_unused());
 }
