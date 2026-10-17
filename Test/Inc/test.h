@@ -44,6 +44,7 @@ void picothread_test_init(void);
 void ringbuf_test(void);
 void stack_test(void);
 void str_test(void);
+void str_view_test(void);
 void vec_test(void);
 void snapshot_test(void);
 void evoke_test(void);

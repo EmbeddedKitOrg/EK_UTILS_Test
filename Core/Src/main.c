@@ -26,6 +26,7 @@ int main(void)
     stack_test();
     snapshot_test();
     str_test();
+    str_view_test();
     vec_test();
 
     while (1)

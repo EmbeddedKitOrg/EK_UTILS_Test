@@ -32,6 +32,7 @@
  * ======================================================================== */
 
 #define EKCFG_STR            (1)
+#define EKCFG_STR_VIEW       (1)
 #define EKCFG_LIST           (1)
 #define EKCFG_VEC            (1)
 #define EKCFG_RINGBUF        (1)
