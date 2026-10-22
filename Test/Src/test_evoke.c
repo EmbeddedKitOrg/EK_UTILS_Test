@@ -16,7 +16,7 @@ void evoke_test(void)
 {
     EK_LOG_INFO("evoke static test start");
 
-    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_OK, "static alloc init failed");
+    TEST_ASSERT(ek_static_alloc_get_init_error() == 0, "static alloc init failed");
     TEST_ASSERT_EQ(static_event.count, 0U, "static event count mismatch");
     TEST_ASSERT(static_evoke_task.cb == _static_evoke_cb, "static evoke task cb mismatch");
 
@@ -26,7 +26,7 @@ void evoke_test(void)
     // 参数检查：非法参数返回错误码而非断言
     TEST_ASSERT(ek_evoke_task_create(NULL, NULL) == NULL, "create with null cb should fail");
     TEST_ASSERT(ek_evoke_event_subscribe(NULL, &static_event) == false, "subscribe with null task should fail");
-    TEST_ASSERT(ek_evoke_event_broadcast_from_isr(NULL, NULL) == EK_ERR_INVAL,
+    TEST_ASSERT(ek_evoke_event_broadcast_from_isr(NULL, NULL) == -EINVAL,
                 "isr broadcast with null event should fail");
     ek_evoke_task_destroy(NULL);
     ek_evoke_event_destroy(NULL);

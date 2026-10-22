@@ -7,7 +7,7 @@ EK_DEFINE_STACK(static_stack, int, 4);
 
 void stack_test(void)
 {
-    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_OK, "static alloc init failed");
+    TEST_ASSERT(ek_static_alloc_get_init_error() == 0, "static alloc init failed");
     TEST_ASSERT((uint8_t *)static_stack->data == (uint8_t *)static_stack + sizeof(*static_stack),
                 "static stack data not inline");
     TEST_ASSERT_EQ(static_stack->cap, 4U, "static stack cap mismatch");
@@ -16,16 +16,16 @@ void stack_test(void)
 
     for (int i = 0; i < 4; i++)
     {
-        TEST_ASSERT(ek_stack_push(static_stack, &i) == EK_OK, "static stack push failed");
+        TEST_ASSERT(ek_stack_push(static_stack, &i) == 0, "static stack push failed");
     }
 
     int extra = 4;
-    TEST_ASSERT(ek_stack_push(static_stack, &extra) == EK_ERR_FULL, "static stack should be full");
+    TEST_ASSERT(ek_stack_push(static_stack, &extra) == -ENOSPC, "static stack should be full");
 
     for (int i = 0; i < 4; i++)
     {
         int stack_item = -1;
-        TEST_ASSERT(ek_stack_pop(static_stack, &stack_item) == EK_OK, "static stack pop failed");
+        TEST_ASSERT(ek_stack_pop(static_stack, &stack_item) == 0, "static stack pop failed");
         TEST_ASSERT_EQ(stack_item, (3 - i), "static stack value mismatch");
     }
 
@@ -44,23 +44,23 @@ void stack_test(void)
     {
         items[i].name = i;
         items[i].score = i * PI;
-        TEST_ASSERT(ek_stack_push(stack, &items[i]) == EK_OK, "stack push failed");
+        TEST_ASSERT(ek_stack_push(stack, &items[i]) == 0, "stack push failed");
         EK_LOG("i:%u push item{name:%u,score:%.2f} sp:%u", i, items[i].name, items[i].score, stack->sp);
     }
 
     student_t overflow = { .name = 99, .score = 99.0f };
-    TEST_ASSERT(ek_stack_push(stack, &overflow) == EK_ERR_FULL, "stack should be full");
+    TEST_ASSERT(ek_stack_push(stack, &overflow) == -ENOSPC, "stack should be full");
 
     for (uint8_t i = 0; i < 5; i++)
     {
         student_t item = { 0 };
-        TEST_ASSERT(ek_stack_pop(stack, &item) == EK_OK, "stack pop failed");
+        TEST_ASSERT(ek_stack_pop(stack, &item) == 0, "stack pop failed");
         TEST_ASSERT_EQ(item.name, (uint8_t)(4 - i), "stack pop name mismatch");
         EK_LOG("i:%u pop item{name:%u,score:%.2f} sp:%u", i, item.name, item.score, stack->sp);
     }
 
     student_t empty_item = { 0 };
-    TEST_ASSERT(ek_stack_pop(stack, &empty_item) == EK_ERR_EMPTY, "stack should be empty");
+    TEST_ASSERT(ek_stack_pop(stack, &empty_item) == -ENODATA, "stack should be empty");
 
     ek_stack_destroy(stack);
     TEST_ASSERT_EQ(ek_heap_unused(), unused_before_dyn, "stack destroy leaked memory");
@@ -68,8 +68,8 @@ void stack_test(void)
     // 参数检查：非法参数返回错误码而非断言
     TEST_ASSERT(ek_stack_create(0, 4) == NULL, "create with zero item_size should fail");
     TEST_ASSERT(ek_stack_create(sizeof(int), 0) == NULL, "create with zero amount should fail");
-    TEST_ASSERT(ek_stack_push(NULL, &extra) == EK_ERR_INVAL, "push to null stack should fail");
-    TEST_ASSERT(ek_stack_pop(NULL, &extra) == EK_ERR_INVAL, "pop from null stack should fail");
+    TEST_ASSERT(ek_stack_push(NULL, &extra) == -EINVAL, "push to null stack should fail");
+    TEST_ASSERT(ek_stack_pop(NULL, &extra) == -EINVAL, "pop from null stack should fail");
     TEST_ASSERT(ek_stack_full(NULL) == false, "null stack full should return false");
     TEST_ASSERT(ek_stack_empty(NULL) == false, "null stack empty should return false");
     ek_stack_destroy(NULL);

@@ -23,10 +23,10 @@ void str_test(void)
 
     s = ek_str_create("hello");
     TEST_ASSERT(s != NULL, "create hello str failed");
-    TEST_ASSERT(ek_str_append(s, " world!") == EK_OK, "str append failed");
+    TEST_ASSERT(ek_str_append(s, " world!") == 0, "str append failed");
     TEST_ASSERT(strcmp(ek_str_get_cstring(s), "hello world!") == 0, "append content mismatch");
 
-    TEST_ASSERT(ek_str_append_fmt(s, "%s", "EmbeddedKit") == EK_OK, "str append_fmt failed");
+    TEST_ASSERT(ek_str_append_fmt(s, "%s", "EmbeddedKit") == 0, "str append_fmt failed");
     TEST_ASSERT(strcmp(ek_str_get_cstring(s), "hello world!EmbeddedKit") == 0, "append_fmt content mismatch");
 
     ek_str_t *slice = ek_str_slice(s, 12, (int32_t)ek_str_get_len(s));
@@ -36,12 +36,12 @@ void str_test(void)
 
     ek_str_t *s1 = ek_str_create(" N1netyNine99");
     TEST_ASSERT(s1 != NULL, "create cat src failed");
-    TEST_ASSERT(ek_str_cat(s, s1) == EK_OK, "str cat failed");
+    TEST_ASSERT(ek_str_cat(s, s1) == 0, "str cat failed");
     TEST_ASSERT(strcmp(ek_str_get_cstring(s), "hello world!EmbeddedKit N1netyNine99") == 0, "cat content mismatch");
 
     ek_str_t *s2 = ek_str_create("abcdefg");
     TEST_ASSERT(s2 != NULL, "create reverse str failed");
-    TEST_ASSERT(ek_str_reverse(s2) == EK_OK, "str reverse failed");
+    TEST_ASSERT(ek_str_reverse(s2) == 0, "str reverse failed");
     TEST_ASSERT(strcmp(ek_str_get_cstring(s2), "gfedcba") == 0, "reverse content mismatch");
 
     ek_str_free(s);
@@ -52,8 +52,8 @@ void str_test(void)
     TEST_ASSERT_EQ(ek_str_get_len(NULL), 0U, "null str len should be 0");
     TEST_ASSERT_EQ(ek_str_get_cap(NULL), 0U, "null str cap should be 0");
     TEST_ASSERT(strcmp(ek_str_get_cstring(NULL), "") == 0, "null str cstring should be empty");
-    TEST_ASSERT(ek_str_append_fmt(NULL, "x") == EK_ERR_INVAL, "append_fmt on null str should fail");
-    TEST_ASSERT(ek_str_cat(NULL, NULL) == EK_ERR_INVAL, "cat with null args should fail");
+    TEST_ASSERT(ek_str_append_fmt(NULL, "x") == -EINVAL, "append_fmt on null str should fail");
+    TEST_ASSERT(ek_str_cat(NULL, NULL) == -EINVAL, "cat with null args should fail");
     ek_str_free(NULL);
 
     TEST_ASSERT_EQ(ek_heap_unused(), unused_start, "str test leaked heap");

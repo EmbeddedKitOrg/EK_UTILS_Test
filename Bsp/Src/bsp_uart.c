@@ -1,7 +1,6 @@
 #include "bsp_uart.h"
 #include "ek_export.h"
 #include "ek_log.h"
-#include "ek_err.h"
 
 void bsp_uart_init(void)
 {

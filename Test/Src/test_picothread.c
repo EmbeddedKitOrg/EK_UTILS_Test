@@ -93,7 +93,7 @@ static void _test_controller(ek_pt_t *pt, void *arg)
 
 void picothread_test_init(void)
 {
-    TEST_ASSERT(ek_static_alloc_get_init_error() == EK_OK, "static alloc init failed");
+    TEST_ASSERT(ek_static_alloc_get_init_error() == 0, "static alloc init failed");
     TEST_ASSERT((uint8_t *)static_msg->rb.data == (uint8_t *)static_msg + sizeof(*static_msg),
                 "static msg data not inline");
     TEST_ASSERT_EQ(static_msg->rb.cap, 3U, "static msg cap mismatch");
@@ -168,7 +168,7 @@ static void _sem_taskA(ek_pt_t *pt, void *arg)
     EK_PT_BEGIN(pt);
     while (1)
     {
-        ek_err_t err;
+        int err;
         EK_PT_SEM_TAKE(s_test_sem, (uint32_t)-1, err);
         s_sem_ok++;
         EK_LOG_INFO("[sem.A] iter=%u acquired", iter);
@@ -191,7 +191,7 @@ static void _sem_taskB(ek_pt_t *pt, void *arg)
     EK_PT_BEGIN(pt);
     while (1)
     {
-        ek_err_t err;
+        int err;
         EK_PT_SEM_TAKE(s_test_sem, (uint32_t)-1, err);
         s_sem_ok++;
         EK_LOG_INFO("[sem.B] iter=%u acquired", iter);
@@ -214,10 +214,10 @@ static void _sem_timeout_demo(ek_pt_t *pt, void *arg)
     EK_PT_BEGIN(pt);
     while (1)
     {
-        ek_err_t err;
+        int err;
         EK_PT_SEM_TAKE(s_test_sem, 500, err);
 
-        if (err == EK_ERR_TIMEOUT)
+        if (err == -ETIMEDOUT)
         {
             s_sem_timeout_cnt++;
             EK_LOG_INFO("[sem.timeout] iter=%u timeout (total_timeout=%u)", iter, s_sem_timeout_cnt);
@@ -259,7 +259,7 @@ static void _msg_sender(ek_pt_t *pt, void *arg)
     EK_PT_BEGIN(pt);
     while (1)
     {
-        ek_err_t err;
+        int err;
         EK_PT_MSG_SEND(s_test_msg, &counter, (uint32_t)-1, err);
         s_msg_send_ok++;
         EK_LOG_INFO("[msg.send] iter=%u sent val=%d", iter, counter);
@@ -280,7 +280,7 @@ static void _msg_receiver(ek_pt_t *pt, void *arg)
     EK_PT_BEGIN(pt);
     while (1)
     {
-        ek_err_t err;
+        int err;
         EK_PT_MSG_RECV(s_test_msg, &data, (uint32_t)-1, err);
         s_msg_recv_ok++;
         EK_LOG_INFO("[msg.recv] iter=%u recv=%d", iter, data);
@@ -300,7 +300,7 @@ static void _msg_sender_fast(ek_pt_t *pt, void *arg)
     EK_PT_BEGIN(pt);
     while (1)
     {
-        ek_err_t err;
+        int err;
         EK_PT_MSG_SEND(s_test_msg, &fast_counter, (uint32_t)-1, err);
         s_msg_send_ok++;
         EK_LOG_INFO("[msg.fast] iter=%u sent val=%d", iter, fast_counter);
