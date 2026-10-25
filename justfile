@@ -3,6 +3,7 @@ alias b := build
 alias f := flash
 alias m := monitor
 alias r := run
+alias fmt := format
 
 clean:
     rm -rf build
@@ -21,5 +22,7 @@ flash:build
 monitor:
     probe-rs reset --chip-description-path GD32F4xx_Series.yaml --chip GD32F470ZG
     tio -b 115200 /dev/ttyACM0 
-
+format:
+    fd -e c -e h -E ek_platform/third_party . Bsp Core Driver Test ek_platform -x clang-format -i
+    
 run:build flash monitor
