@@ -4,6 +4,6 @@
 #include "gd32f4xx.h"
 #include "gd32f4xx_libopt.h"
 #include "systick.h"
-#include "ek_def.h"
+#include <ek/core/ek_def.h>
 
 #endif /* __MAIN_H */

@@ -26,8 +26,7 @@ void evoke_test(void)
     // 参数检查：非法参数返回错误码而非断言
     TEST_ASSERT(ek_evoke_task_create(NULL, NULL) == NULL, "create with null cb should fail");
     TEST_ASSERT(ek_evoke_event_subscribe(NULL, &static_event) == false, "subscribe with null task should fail");
-    TEST_ASSERT(ek_evoke_event_broadcast_from_isr(NULL, NULL) == -EINVAL,
-                "isr broadcast with null event should fail");
+    TEST_ASSERT(ek_evoke_event_broadcast_from_isr(NULL, NULL) == -EINVAL, "isr broadcast with null event should fail");
     ek_evoke_task_destroy(NULL);
     ek_evoke_event_destroy(NULL);
 

@@ -129,7 +129,7 @@ __PACKED_STRUCT T_UINT32_READ
 #    define __RESTRICT __restrict
 #endif
 #ifndef __COMPILER_BARRIER
-#    define __COMPILER_BARRIER() __ASM volatile("" ::: "memory")
+#    define __COMPILER_BARRIER() __ASM volatile("" :: : "memory")
 #endif
 
 /* #########################  Startup and Lowlevel Init  ######################## */
@@ -251,14 +251,14 @@ __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S(uint32_t *stackTop)
   \brief   Wait For Interrupt
   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number of events occurs.
  */
-#define __WFI() __ASM volatile("wfi" ::: "memory")
+#define __WFI() __ASM volatile("wfi" :: : "memory")
 
 /**
   \brief   Wait For Event
   \details Wait For Event is a hint instruction that permits the processor to enter
            a low-power state until one of a number of events occurs.
  */
-#define __WFE() __ASM volatile("wfe" ::: "memory")
+#define __WFE() __ASM volatile("wfe" :: : "memory")
 
 /**
   \brief   Send Event
@@ -274,7 +274,7 @@ __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S(uint32_t *stackTop)
  */
 __STATIC_FORCEINLINE void __ISB(void)
 {
-    __ASM volatile("isb 0xF" ::: "memory");
+    __ASM volatile("isb 0xF" :: : "memory");
 }
 
 /**
@@ -284,7 +284,7 @@ __STATIC_FORCEINLINE void __ISB(void)
  */
 __STATIC_FORCEINLINE void __DSB(void)
 {
-    __ASM volatile("dsb 0xF" ::: "memory");
+    __ASM volatile("dsb 0xF" :: : "memory");
 }
 
 /**
@@ -294,7 +294,7 @@ __STATIC_FORCEINLINE void __DSB(void)
  */
 __STATIC_FORCEINLINE void __DMB(void)
 {
-    __ASM volatile("dmb 0xF" ::: "memory");
+    __ASM volatile("dmb 0xF" :: : "memory");
 }
 
 /**
@@ -538,7 +538,7 @@ __STATIC_FORCEINLINE uint32_t __STREXW(uint32_t value, volatile uint32_t *addr)
  */
 __STATIC_FORCEINLINE void __CLREX(void)
 {
-    __ASM volatile("clrex" ::: "memory");
+    __ASM volatile("clrex" :: : "memory");
 }
 
 #endif /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
@@ -1987,13 +1987,17 @@ __STATIC_FORCEINLINE uint64_t __SMLALD(uint32_t op1, uint32_t op2, uint64_t acc)
     llr.w64 = acc;
 
 #    ifndef __ARMEB__ /* Little endian */
-    __ASM volatile("smlald %0, %1, %2, %3"
-                   : "=r"(llr.w32[0]), "=r"(llr.w32[1])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[0]), "1"(llr.w32[1]));
+    __ASM volatile("smlald %0, %1, %2, %3" : "=r"(llr.w32[0]),
+                   "=r"(llr.w32[1]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[0]),
+                   "1"(llr.w32[1]));
 #    else /* Big endian */
-    __ASM volatile("smlald %0, %1, %2, %3"
-                   : "=r"(llr.w32[1]), "=r"(llr.w32[0])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[1]), "1"(llr.w32[0]));
+    __ASM volatile("smlald %0, %1, %2, %3" : "=r"(llr.w32[1]),
+                   "=r"(llr.w32[0]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[1]),
+                   "1"(llr.w32[0]));
 #    endif
 
     return (llr.w64);
@@ -2009,13 +2013,17 @@ __STATIC_FORCEINLINE uint64_t __SMLALDX(uint32_t op1, uint32_t op2, uint64_t acc
     llr.w64 = acc;
 
 #    ifndef __ARMEB__ /* Little endian */
-    __ASM volatile("smlaldx %0, %1, %2, %3"
-                   : "=r"(llr.w32[0]), "=r"(llr.w32[1])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[0]), "1"(llr.w32[1]));
+    __ASM volatile("smlaldx %0, %1, %2, %3" : "=r"(llr.w32[0]),
+                   "=r"(llr.w32[1]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[0]),
+                   "1"(llr.w32[1]));
 #    else /* Big endian */
-    __ASM volatile("smlaldx %0, %1, %2, %3"
-                   : "=r"(llr.w32[1]), "=r"(llr.w32[0])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[1]), "1"(llr.w32[0]));
+    __ASM volatile("smlaldx %0, %1, %2, %3" : "=r"(llr.w32[1]),
+                   "=r"(llr.w32[0]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[1]),
+                   "1"(llr.w32[0]));
 #    endif
 
     return (llr.w64);
@@ -2063,13 +2071,17 @@ __STATIC_FORCEINLINE uint64_t __SMLSLD(uint32_t op1, uint32_t op2, uint64_t acc)
     llr.w64 = acc;
 
 #    ifndef __ARMEB__ /* Little endian */
-    __ASM volatile("smlsld %0, %1, %2, %3"
-                   : "=r"(llr.w32[0]), "=r"(llr.w32[1])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[0]), "1"(llr.w32[1]));
+    __ASM volatile("smlsld %0, %1, %2, %3" : "=r"(llr.w32[0]),
+                   "=r"(llr.w32[1]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[0]),
+                   "1"(llr.w32[1]));
 #    else /* Big endian */
-    __ASM volatile("smlsld %0, %1, %2, %3"
-                   : "=r"(llr.w32[1]), "=r"(llr.w32[0])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[1]), "1"(llr.w32[0]));
+    __ASM volatile("smlsld %0, %1, %2, %3" : "=r"(llr.w32[1]),
+                   "=r"(llr.w32[0]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[1]),
+                   "1"(llr.w32[0]));
 #    endif
 
     return (llr.w64);
@@ -2085,13 +2097,17 @@ __STATIC_FORCEINLINE uint64_t __SMLSLDX(uint32_t op1, uint32_t op2, uint64_t acc
     llr.w64 = acc;
 
 #    ifndef __ARMEB__ /* Little endian */
-    __ASM volatile("smlsldx %0, %1, %2, %3"
-                   : "=r"(llr.w32[0]), "=r"(llr.w32[1])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[0]), "1"(llr.w32[1]));
+    __ASM volatile("smlsldx %0, %1, %2, %3" : "=r"(llr.w32[0]),
+                   "=r"(llr.w32[1]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[0]),
+                   "1"(llr.w32[1]));
 #    else /* Big endian */
-    __ASM volatile("smlsldx %0, %1, %2, %3"
-                   : "=r"(llr.w32[1]), "=r"(llr.w32[0])
-                   : "r"(op1), "r"(op2), "0"(llr.w32[1]), "1"(llr.w32[0]));
+    __ASM volatile("smlsldx %0, %1, %2, %3" : "=r"(llr.w32[1]),
+                   "=r"(llr.w32[0]) : "r"(op1),
+                   "r"(op2),
+                   "0"(llr.w32[1]),
+                   "1"(llr.w32[0]));
 #    endif
 
     return (llr.w64);

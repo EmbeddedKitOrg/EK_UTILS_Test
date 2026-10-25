@@ -673,7 +673,7 @@ void rtc_timestamp_pin_map(uint32_t rtc_af)
 void rtc_tamper_enable(rtc_tamper_struct *rtc_tamper)
 {
     /* disable tamper */
-    RTC_TAMP &= (uint32_t) ~(rtc_tamper->tamper_source);
+    RTC_TAMP &= (uint32_t)~(rtc_tamper->tamper_source);
 
     /* tamper filter must be used when the tamper source is voltage level detection */
     RTC_TAMP &= (uint32_t)~RTC_TAMP_FLT;
@@ -681,7 +681,7 @@ void rtc_tamper_enable(rtc_tamper_struct *rtc_tamper)
     /* the tamper source is voltage level detection */
     if ((uint32_t)(rtc_tamper->tamper_filter) != RTC_FLT_EDGE)
     {
-        RTC_TAMP &= (uint32_t) ~(RTC_TAMP_DISPU | RTC_TAMP_PRCH | RTC_TAMP_FREQ | RTC_TAMP_FLT);
+        RTC_TAMP &= (uint32_t)~(RTC_TAMP_DISPU | RTC_TAMP_PRCH | RTC_TAMP_FREQ | RTC_TAMP_FLT);
 
         /* check if the tamper pin need precharge, if need, then configure the precharge time */
         if (DISABLE == rtc_tamper->tamper_precharge_enable)
@@ -697,7 +697,7 @@ void rtc_tamper_enable(rtc_tamper_struct *rtc_tamper)
         RTC_TAMP |= (uint32_t)(rtc_tamper->tamper_filter);
 
         /* configure the tamper trigger */
-        RTC_TAMP &= ((uint32_t) ~((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS));
+        RTC_TAMP &= ((uint32_t)~((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS));
         if (RTC_TAMPER_TRIGGER_LEVEL_LOW != rtc_tamper->tamper_trigger)
         {
             RTC_TAMP |= (uint32_t)((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS);
@@ -706,7 +706,7 @@ void rtc_tamper_enable(rtc_tamper_struct *rtc_tamper)
     else
     {
         /* configure the tamper trigger */
-        RTC_TAMP &= ((uint32_t) ~((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS));
+        RTC_TAMP &= ((uint32_t)~((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS));
         if (RTC_TAMPER_TRIGGER_EDGE_RISING != rtc_tamper->tamper_trigger)
         {
             RTC_TAMP |= (uint32_t)((rtc_tamper->tamper_source) << RTC_TAMPER_TRIGGER_POS);
@@ -795,9 +795,9 @@ void rtc_interrupt_disable(uint32_t interrupt)
     RTC_WPK = RTC_UNLOCK_KEY2;
 
     /* disable the interrupts in RTC_CTL register */
-    RTC_CTL &= (uint32_t) ~(interrupt & (uint32_t)~RTC_TAMP_TPIE);
+    RTC_CTL &= (uint32_t)~(interrupt & (uint32_t)~RTC_TAMP_TPIE);
     /* disable the interrupts in RTC_TAMP register */
-    RTC_TAMP &= (uint32_t) ~(interrupt & RTC_TAMP_TPIE);
+    RTC_TAMP &= (uint32_t)~(interrupt & RTC_TAMP_TPIE);
 
     /* enable the write protection */
     RTC_WPK = RTC_LOCK_KEY;
@@ -901,7 +901,7 @@ void rtc_calibration_output_config(uint32_t source)
     RTC_WPK = RTC_UNLOCK_KEY1;
     RTC_WPK = RTC_UNLOCK_KEY2;
 
-    RTC_CTL &= (uint32_t) ~(RTC_CTL_COEN | RTC_CTL_COS);
+    RTC_CTL &= (uint32_t)~(RTC_CTL_COEN | RTC_CTL_COS);
 
     RTC_CTL |= (uint32_t)(source);
     /* enable the write protection */
