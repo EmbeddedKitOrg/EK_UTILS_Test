@@ -6,9 +6,9 @@ project(ek_utils_test LANGUAGES C CXX ASM)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# ek_utils 子模块
+# ek_platform 子模块
 set(EK_CONF_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_conf.h" CACHE STRING "Path to ek_conf.h" FORCE)
-add_subdirectory(ek_utils)
+add_subdirectory(ek_platform)
 
 # GD32头文件
 set(GD_Include_Dir
@@ -50,7 +50,7 @@ target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
     -T ${LINKER_SCRIPT}
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ek_utils)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ek_platform)
 
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     -fdiagnostics-color=always
