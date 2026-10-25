@@ -1,3 +1,6 @@
 [submodule "ek_utils"]
-	path = ek_utils
+	path = ek_platform
+	url = https://github.com/EmbeddedKitOrg/EK_Platform.git
+[submodule "ek_platform"]
+	path = ek_platform
 	url = https://github.com/EmbeddedKitOrg/EK_Platform.git
