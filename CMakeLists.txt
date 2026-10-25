@@ -56,4 +56,7 @@ target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     -fdiagnostics-color=always
     -Wall
     -Wextra
+    -Wno-unused-variable
+    -Wno-unused-function
+    -Wno-unused-but-set-variable
 )
