@@ -13,12 +13,17 @@ static void _restore_clock_to_240m(void);
 
 EK_LOG_MODULE("main.c", EK_LOG_LEVEL_INFO);
 
-int main(void)
+void system_init(void)
 {
     rcu_periph_clock_enable(RCU_PMU);
     nvic_priority_group_set(NVIC_PRIGROUP_PRE0_SUB4);
     systick_init();
+}
 
+EK_EXPORT_EARLIEST(system_init, 0);
+
+int main(void)
+{
     evoke_test();
     picothread_test_init();
     ringbuf_test();
