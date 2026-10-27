@@ -9,10 +9,7 @@ clean:
     rm -rf build
 
 build:
-    cmake -DCMAKE_TOOLCHAIN_FILE=ek_platform/cmake/gcc-arm-none-eabi.cmake \
-    -DPLATFORM=cm4  \
-    -DPICOLIBC=1 \
-    -B build -G Ninja 
+    cmake -B build -G Ninja
     ninja -C build
 
 flash:build
