@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux", // 或 Win32 / Mac，根据你的系统调整
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/arm-none-eabi-gcc", // 你的编译器路径（嵌入式通常为 arm-none-eabi-gcc 等）
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-arm", // 嵌入式 ARM 选 linux-gcc-arm，普通 x86 选 linux-gcc-x64
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json" // 核心配置项
+        }
+    ],
+    "version": 4
+}
