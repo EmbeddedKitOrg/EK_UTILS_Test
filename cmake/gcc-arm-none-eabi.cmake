@@ -18,12 +18,6 @@ set(CMAKE_EXECUTABLE_SUFFIX_C       ".elf")
 set(CMAKE_EXECUTABLE_SUFFIX_CXX     ".elf")
 set(CMAKE_TRY_COMPILE_TARGET_TYPE   STATIC_LIBRARY)
 
-if(NOT CMAKE_SOURCE_DIR MATCHES "CMakeScratch")
-    if(NOT EXISTS "${LINKER_SCRIPT}")
-        message(WARNING "Linker script not found at: ${LINKER_SCRIPT}")
-    endif()
-endif()
-
 # try_compile 期间 PLATFORM 不可用，跳过平台检查
 if(NOT CMAKE_SOURCE_DIR MATCHES "CMakeScratch")
     # 平台必填，不设默认值

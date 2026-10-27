@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/gd32f470zgt6_flash.ld)
-
 project(ek_utils_test LANGUAGES C CXX ASM)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ek_platform 子模块
-set(EK_CONF_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_conf.h" CACHE STRING "Path to ek_conf.h" FORCE)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ek_platform/cmake/ek_config.cmake)
+ek_set_conf_file("${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_conf.h")
+ek_set_linker_file("${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_board.h")
 add_subdirectory(ek_platform)
 
 # GD32头文件
@@ -44,10 +44,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     GD32F470
-)
-
-target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
-    -T ${LINKER_SCRIPT}
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ek_platform)
