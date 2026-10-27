@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 # 工具链与平台配置必须在 project() 之前
 include(${CMAKE_CURRENT_SOURCE_DIR}/ek_platform/cmake/ek_config.cmake)
 ek_set_arch(cm4)
+set(PICOLIBC_FETCH ON)
 ek_set_picolibc(ON)
 ek_set_toolchain()
 
