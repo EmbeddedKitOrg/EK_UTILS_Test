@@ -18,7 +18,6 @@ int main(void)
     rcu_periph_clock_enable(RCU_PMU);
     nvic_priority_group_set(NVIC_PRIGROUP_PRE0_SUB4);
     systick_init();
-    ek_export_init();
 
     evoke_test();
     picothread_test_init();
