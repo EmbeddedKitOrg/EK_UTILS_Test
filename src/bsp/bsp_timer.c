@@ -1,6 +1,6 @@
 #include "bsp_timer.h"
-#include "ek_export.h"
-#include "ek_log.h"
+#include "ek/core/ek_export.h"
+#include "ek/core/ek_log.h"
 
 EK_LOG_FILE_TAG("bsp_timer.c");
 

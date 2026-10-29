@@ -1,5 +1,5 @@
 #include "test.h"
-#include "ek_picothread.h"
+#include "ek/sched/ek_picothread.h"
 
 EK_LOG_FILE_TAG("test_picothread");
 

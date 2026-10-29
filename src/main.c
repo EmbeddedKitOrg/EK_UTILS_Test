@@ -5,13 +5,13 @@
 #include "bsp_led.h"
 #include "bsp_timer.h"
 
-#include "ek_export.h"
-#include "ek_picothread.h"
-#include "ek_log.h"
+#include "ek/core/ek_export.h"
+#include "ek/core/ek_log.h"
+#include "ek/sched/ek_picothread.h"
 
 static void _restore_clock_to_240m(void);
 
-EK_LOG_MODULE("main.c", EK_LOG_LEVEL_INFO);
+EK_LOG_MODULE(__FILE_NAME__, EK_LOG_LEVEL_INFO);
 
 void system_init(void)
 {
