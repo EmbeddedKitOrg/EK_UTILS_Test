@@ -1,19 +1,17 @@
 cmake_minimum_required(VERSION 3.20)
 
-# 工具链与平台配置必须在 project() 之前
-include(${CMAKE_CURRENT_SOURCE_DIR}/ek_platform/cmake/ek_config.cmake)
-ek_set_arch(cm4)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ek_platform/cmake/ek_platform.cmake)
+ek_platform_prepare(ARCH cm4 PICOLIBC ON)
 set(PICOLIBC_FETCH ON)
-ek_set_picolibc(ON)
-ek_set_toolchain()
 
 project(ek_utils_test LANGUAGES C CXX ASM)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ek_platform 子模块
-ek_set_conf_file("${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_conf.h")
-ek_set_linker_file("${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_board.h")
+ek_platform_configure(
+    CONF "${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_conf.h"
+    BOARD "${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_board.h")
 add_subdirectory(ek_platform)
 
 # GD32头文件
