@@ -24,14 +24,15 @@ EK_EXPORT_EARLIEST(system_init, 0);
 
 int main(void)
 {
-    evoke_test();
-    picothread_test_init();
-    ringbuf_test();
-    stack_test();
-    snapshot_test();
-    str_test();
-    str_view_test();
-    vec_test();
+    // evoke_test();
+    // picothread_test_init();
+    // ringbuf_test();
+    // stack_test();
+    // snapshot_test();
+    // str_test();
+    // str_view_test();
+    // vec_test();
+    vfs_test();
 
     while (1)
     {

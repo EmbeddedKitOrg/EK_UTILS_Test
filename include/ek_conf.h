@@ -43,19 +43,20 @@
 #define EKCFG_PICOTHREAD     (1)
 #define EKCFG_PICOTHREAD_SEM (1)
 #define EKCFG_PICOTHREAD_MSG (1)
-#define EKCFG_VFS            (0)
+#define EKCFG_VFS            (1)
 
 /* ========================================================================
  * 模块子配置 — 根据实际硬件调整
  * ======================================================================== */
 
-#define EKCFG_HEAP_TLSF    (1)
-#define EKCFG_HEAP_SIZE    (64 * 1024)
-#define EKCFG_HEAP_SECTION ".tcmram"
-#define EKCFG_LOG_DEBUG    (1)
-#define EKCFG_LOG_COLOR    (1)
-#define EKCFG_LOG_BUF_SIZE (128)
-#define EKCFG_ASSERT_TINY  (1)
-#define EKCFG_ASSERT_LOG   (1)
+#define EKCFG_HEAP_TLSF          (1)
+#define EKCFG_HEAP_SIZE          (64 * 1024)
+#define EKCFG_HEAP_SECTION       ".tcmram"
+#define EKCFG_LOG_DEBUG          (1)
+#define EKCFG_LOG_COLOR          (1)
+#define EKCFG_LOG_BUF_SIZE       (128)
+#define EKCFG_ASSERT_TINY        (1)
+#define EKCFG_ASSERT_LOG         (1)
+#define EKCFG_VFS_TREE_DUMP_UTF8 (1) 
 
 #endif /* EK_CONF_H */
