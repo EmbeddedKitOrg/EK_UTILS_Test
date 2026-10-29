@@ -1,62 +1,43 @@
 cmake_minimum_required(VERSION 3.20)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/ek_platform/cmake/ek_platform.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/lib/ek_platform/cmake/ek_platform.cmake)
 ek_platform_prepare(ARCH cm4 PICOLIBC ON)
 set(PICOLIBC_FETCH ON)
 
-project(ek_utils_test LANGUAGES C CXX ASM)
+project(main LANGUAGES C CXX ASM)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ek_platform 子模块
 ek_platform_configure(
-    CONF "${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_conf.h"
-    BOARD "${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/ek_board.h")
-add_subdirectory(ek_platform)
+    CONF "${CMAKE_CURRENT_SOURCE_DIR}/include/ek_conf.h"
+    BOARD "${CMAKE_CURRENT_SOURCE_DIR}/include/ek_board.h")
+add_subdirectory(lib/ek_platform)
+add_subdirectory(lib/gd32f4xx_driver)
 
-# GD32头文件
-set(GD_Include_Dir
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Driver/Inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Driver/CMSIS/Device/GD/GD32F4xx/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Driver/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Bsp/Inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Test/Inc
+set(INC_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/bsp
 )
 
 # 收集源文件
-file(GLOB GD_Start_S ${CMAKE_CURRENT_SOURCE_DIR}/*.s)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Core/Src GD_Core_Src)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Driver/Src GD_Std_Src)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Driver/CMSIS/Device/GD/GD32F4xx/Source GD_CMSIS_Src)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Bsp/Src GD_Bsp_Src)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Test/Src GD_Test_Src)
+file(GLOB START ${CMAKE_CURRENT_SOURCE_DIR}/startup/*.s)
+file(GLOB SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 
 # 创建可执行文件目标
-add_executable(${CMAKE_PROJECT_NAME}
-    ${GD_Start_S}
-    ${GD_Core_Src}
-    ${GD_Std_Src}
-    ${GD_CMSIS_Src}
-    ${GD_Bsp_Src}
-    ${GD_Test_Src}
-)
+add_executable(${CMAKE_PROJECT_NAME} ${SRCS} ${START})
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-    ${GD_Include_Dir}
+    ${INC_DIRS}
 )
 
-target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-    GD32F470
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
+    ek_platform
+    gd32f4xx_driver
 )
-
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ek_platform)
 
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
     -fdiagnostics-color=always
     -Wall
     -Wextra
-    -Wno-unused-variable
-    -Wno-unused-function
-    -Wno-unused-but-set-variable
 )

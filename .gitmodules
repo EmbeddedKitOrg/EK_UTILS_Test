@@ -2,5 +2,5 @@
 	path = ek_platform
 	url = https://github.com/EmbeddedKitOrg/EK_Platform.git
 [submodule "ek_platform"]
-	path = ek_platform
+	path = lib/ek_platform
 	url = https://github.com/EmbeddedKitOrg/EK_Platform.git
