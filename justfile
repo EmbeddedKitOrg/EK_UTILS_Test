@@ -13,7 +13,7 @@ build:
     ninja -C build
 
 flash:build
-    probe-rs download --speed 4000 --chip GD32F470ZG ./build/ek_utils_test.elf
+    probe-rs download --speed 4000 --chip GD32F470ZG ./build/main.elf
     probe-rs reset --chip GD32F470ZG
         
 monitor:

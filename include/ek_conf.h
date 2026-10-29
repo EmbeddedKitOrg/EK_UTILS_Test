@@ -43,6 +43,7 @@
 #define EKCFG_PICOTHREAD     (1)
 #define EKCFG_PICOTHREAD_SEM (1)
 #define EKCFG_PICOTHREAD_MSG (1)
+#define EKCFG_VFS            (0)
 
 /* ========================================================================
  * 模块子配置 — 根据实际硬件调整
